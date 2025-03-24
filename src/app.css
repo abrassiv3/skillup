@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap');
+@import url('https://api.fontshare.com/css?f=general-sans');
+@import url('https://api.fontshare.com/css?f=clash-display');
+@import "tailwindcss";
+
+.nav-bar-container, .button-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-bar-container {
+    padding: 10px;
+    justify-content: center;
+}
+
+.button-container {
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.go-to-jobs-card {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    text-align: center;
+    justify-content: space-evenly;
+    gap: 10px;
+    width: 400px;
+    height: 200px;
+    background-color: rgb(48, 47, 47);
+    border-radius: 16px;
+}
+
+.go-to-jobs-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 25px;
+    color: #64ff79;
+}
+
+.go-to-jobs-link{
+    font-family: "Gabarito", sans-serif;
+    color: #007210;
+}
+
+.go-to-jobs-opportunity {
+    color: #00f7ff;
+}
+
+.createPostForm {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.formSection{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    font-family: "Gabarito", sans-serif;
+}
+
+input::placeholder {
+    font-family: "General Sans", serif;
+    font-style: italic;
+}
+
+.formContainer {
+    padding: 10px;
+}
+
+.createPostHeading {
+    font-size: 24px;
+    font-weight: 700;
+}
+  
+input {
+    border: .2px solid #007997;
+    border-radius: 4px;
+    padding: 8px;
+  }
+
+  .skillupheader{
+    font-family: "Clash Display", sans-serif;
+    font-weight: 700;
+    font-size: 100px;
+  }

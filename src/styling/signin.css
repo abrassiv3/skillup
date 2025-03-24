@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap');
+@import url('https://api.fontshare.com/css?f%5B%5D=general-sans'); 
+
+.label, .sign-up-text, .sign-in {
+    font-family: 'General Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    padding-top: 12px;
+    padding-bottom: 2px;
+}
+
+form {
+    padding-top: 0px;
+    border: 1.2px solid #fff;
+    border-radius: 8px;
+}
+
+.sign-in{
+    font-weight: 700;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
