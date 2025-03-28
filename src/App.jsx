@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { href } from 'react-router-dom'
 import dashboard from './components/Dashboard'
 import signup from './components/Signup'
-// import signIn from './components/Signin'
+import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 function App() {
-  
+  const navigate = useNavigate();
 
   return (
     <>
@@ -19,8 +20,6 @@ function App() {
         </div>            
       </div>
     </div>
-      {/* <signup />
-      <SignIn /> */}
     </>
   )
 }
