@@ -3,6 +3,26 @@
 @import url('https://api.fontshare.com/css?f=clash-display');
 @import "tailwindcss";
 
+.header {
+  font-family: "General Sans", sans-serif;
+  font-weight: 800;
+}
+
+.section-header {
+  font-family: "Clash Display", sans-serif;
+  font-weight: 700;
+  font-size: 50px;
+}
+
+.welcome{
+  font-family: "Gabarito", sans-serif; 
+}
+
+.welcome-header {
+  font-weight: 600;
+  font-size: 60px;
+}
+
 .nav-bar-container, .button-container{
     display: flex;
     flex-direction: row;
@@ -25,8 +45,8 @@
     text-align: center;
     justify-content: space-evenly;
     gap: 10px;
-    width: 400px;
-    height: 200px;
+    /* width: 400px; */
+    /* height: 200px; */
     background-color: rgb(48, 47, 47);
     border-radius: 16px;
 }
@@ -38,9 +58,11 @@
     color: #64ff79;
 }
 
-.go-to-jobs-link{
+.go-to-jobs-link {
     font-family: "Gabarito", sans-serif;
-    color: #007210;
+    font-size: 20px;
+    width: fit-content;
+    /* color: #007210; */
 }
 
 .go-to-jobs-opportunity {
@@ -60,7 +82,7 @@
     font-family: "Gabarito", sans-serif;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
     font-family: "General Sans", serif;
     font-style: italic;
 }
@@ -74,14 +96,130 @@ input::placeholder {
     font-weight: 700;
 }
   
-input {
+input, textarea, select, option {
     border: .2px solid #007997;
     border-radius: 4px;
     padding: 8px;
   }
 
-  .skillupheader{
-    font-family: "Clash Display", sans-serif;
-    font-weight: 700;
-    font-size: 100px;
-  }
+input, textarea {
+  margin-top: 2px;
+}
+
+textarea {
+  height: 150px;
+  resize: none;
+}
+
+.skillupheader{
+  font-family: "Clash Display", sans-serif;
+  font-weight: 700;
+  font-size: 100px;
+}
+/* Dashboard CSS */
+.btn-sec {
+  background-color: #8d2323;
+}
+.btn-sec:hover {
+  background-color: #f54e4e;
+  color: #000;
+  cursor: pointer;
+}
+.btn-sec:disabled {
+  background-color: #363636;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.btn-ter {
+  background-color: #233f8d;
+}
+.btn-ter:hover {
+  background-color: #4e6ef5;
+  color: #000;
+  cursor: pointer;
+}
+/* CreatePost CSS */
+option {
+  color: #fff;
+  background-color: #242424;
+}
+/* CreateUser CSS */
+.radio-container {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 10px;
+  margin-top: 2px;
+  margin-bottom: 12px;
+  border-radius: 4px;
+  background-color: #404040;
+}
+#client, #freelancer {
+  margin-right: 10px;
+}
+/* ------------------------------------------------------------------------------------------------ */
+.sb-main:hover{
+background-color: #64ff79;
+color: #000;
+outline-color: #64ff79;
+transition: .45s;
+}
+/* ------------------------------------------------------------------------------------------------ */
+.skills-chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-chip {
+  padding: 8px 12px;
+  background-color: #404040;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.skill-chip.selected {
+  background-color: #64ff79;
+  color: #000;
+}
+
+.skills-list {
+    list-style-type: none;
+}
+
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.dashboard-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.dashboard-content {
+  flex: 1;
+  /* padding: 20px; */
+  overflow-y: auto;
+  
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #333;
+  color: white;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.header {
+  height: 60px;
+  background-color: #222;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}

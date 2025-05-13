@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap');
 @import url('https://api.fontshare.com/css?f%5B%5D=general-sans'); 
 
-.label, .sign-up-text, .sign-in, .sign-in-text, .sign-up {
+.label, .sign-up-text, .sign-in, .sign-in-text, .sign-up, .radiolabel {
     font-family: 'General Sans', sans-serif;
     font-size: 20px;
     font-weight: 500;
@@ -9,6 +9,10 @@
     padding-top: 12px;
     /* padding-bottom: 2px; */
 }
+
+.radiolabel {
+    padding-top: 0px;
+  }
 
 form {
     padding-top: 0px;
@@ -33,7 +37,7 @@ form {
     gap: 15px;
 }
 
-.back-arrow {
+.back-arrow, .add {
     width: 30px;
     height: 30px;
 }

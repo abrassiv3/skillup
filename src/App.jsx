@@ -1,25 +1,25 @@
-import { useState } from 'react'
-import { href } from 'react-router-dom'
-import dashboard from './components/Dashboard'
-import signup from './components/Signup'
+import './index.css'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import NavBar from './components/NavBar';
 
 function App() {
   const navigate = useNavigate();
 
   return (
     <>
-      <div class='go-to-jobs-card'>
-      <p class='go-to-jobs-title'>Your Next <span class='go-to-jobs-opportunity'>Opportunity</span> Awaits</p>
-      <a class='go-to-jobs-link'>View Jobs</a>
-      <div class='nav-bar-container'>
-        <div class='button-container'>
-          <button>Sign up</button>
-          <button>Log in</button>
-        </div>            
+    <NavBar />
+    <h1 className="skillupheader text-center pt-4 pb-4 text-2xl">SKILLUP</h1>
+      <div className='go-to-jobs-card w-2/4'>
+        <p className='go-to-jobs-title'>Your Next <span className='go-to-jobs-opportunity'>Opportunity</span> Awaits</p>
+        <Link className='go-to-jobs-link' to="/job-posts">View Jobs</Link>
+        <div className='nav-bar-container'>
+          <div className='button-container'>
+            <button onClick={() => { navigate("/signup")}}>Sign Up</button>
+            <button onClick={() => {navigate("/signin")}}>Sign in</button>
+          </div>            
+        </div>
       </div>
-    </div>
     </>
   )
 }
