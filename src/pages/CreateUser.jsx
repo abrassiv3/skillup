@@ -122,7 +122,7 @@ const handleFileChange = (e) => {
                 type="radio"
                 id="client"
                 name="usertype"
-                value="client"
+                value="Client"
                 onChange={(e) => setUserType(e.target.value)} />
               Client
             </label>
@@ -132,7 +132,7 @@ const handleFileChange = (e) => {
                 type="radio"
                 id="freelancer"
                 name="usertype"
-                value="freelancer"
+                value="Freelancer"
                 onChange={(e) => setUserType(e.target.value)} />
               Freelancer
             </label>
