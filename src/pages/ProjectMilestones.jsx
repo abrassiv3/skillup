@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
 const ProjectMilestones = () => {
   const { id } = useParams();
+  const navigate =useNavigate()
   const [milestones, setMilestones] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadingMilestoneId, setUploadingMilestoneId] = useState(null);
@@ -150,24 +151,18 @@ useEffect(() => {
   return (
     <div className="w-full p-2">
       <h2 className="section-header text-2xl font-semibold">Milestones</h2>
-{milestones.length > 0 && milestones[0].projectid ? (
-  <>
-    <p>Project: {milestones[0].projectid.title}</p>
-    <p className='font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl text-blue-400'>
-      Status: {milestones[0].projectid.status}
-    </p>
-  </>
-) : (
-   <>
-     {/* <p>Project: Milestones</p>
-     <p className='font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl text-blue-400'>
-       Status: Unknown
-     </p> */}
-   </>
-)}
+
+      {milestones.length > 0 ? 
+      <div>
+       <p>Project: {milestones[0].projectid.title}</p> 
+       <p className='font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl text-blue-400'>Status: {milestones[0].projectid.status}</p> 
+      </div> : '' }
 
       {milestones.length === 0 ? (
-        <p>No milestones found for this project.</p>
+        <div className='flex flex-col gap-4 items-center'>
+        <p className='text-3xl'>No milestones found for this project.</p>
+        <button onClick={() => navigate('/fl-dashboard')}>Back to Active Posts</button>
+        </div>
       ) : (
         <ul className="flex flex-col gap-4">
           {milestones.map((milestone) => (

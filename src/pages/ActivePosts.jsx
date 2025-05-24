@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { userAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import plus from '../assets/add.svg'
 
 const ActivePosts = () => {
   const { session } = userAuth();
@@ -22,19 +23,15 @@ const fetchProjects = async () => {
 
   const { data, error } = await supabase
     .from('freelancer-projects')
-    .select('*, projectid(project_id, title, status)')
+    .select('*, freelancer_id(firstname, lastname), projectid(project_id, title, status)')
     .eq('client_id', session.user.id);
 
   if (error) {
     console.error('Error fetching projects:', error);
   } else {
-    // Filter only projects with status === 'ONGOING'
     const ongoing = data.filter(project => project.projectid?.status === 'ONGOING');
-
-    setProjects(ongoing);
-
-    // Fetch milestones only for ongoing projects
-    ongoing.forEach(project => fetchMilestones(project.projectid.project_id));
+      setProjects(ongoing);
+      ongoing.forEach(project => fetchMilestones(project.projectid.project_id));
   }
 
   setLoading(false);
@@ -80,7 +77,6 @@ const handleAddMilestone = async (e) => {
   }
 };
 
-
   const handleDeleteMilestone = async (milestoneId, projectId) => {
     const { error } = await supabase
       .from('milestones')
@@ -92,7 +88,6 @@ const handleAddMilestone = async (e) => {
       fetchMilestones(projectId);
     }
   };
-
 
   if (loading) {
         return (
@@ -118,23 +113,28 @@ const handleAddMilestone = async (e) => {
         projects.map(project => (
           <div key={project.projectid} className="p-4 rounded-lg bg-neutral-900">
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-white">{project.projectid.title}</h3>
               
+              <div className='flex flex-col'>
+                <h3 className="text-xl font-bold text-white">{project.projectid.title}</h3>
+                <p className='text-neutral-300 font-bold'>Freelancer: {project.freelancer_id.firstname} {project.freelancer_id.lastname}</p>
+              </div>
+
               <div className='flex gap-4'>
               <button
                 onClick={() => handleOpenModal(project)}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
-                + Add Milestone
+                <div className='flex items-center gap-1'><img src={plus}/> Add Milestone</div>
               </button>
               <button className='btn-ter' onClick={() => {navigate(`/project/${project.projectid.project_id}`)}}>View Progress</button>
               </div>
 
             </div>
             
-            <ul className="mt-4 space-y-2">
-              {milestones[project.projectid.project_id]?.map(milestone => (
-                <li key={milestone.id} className="flex justify-between items-center  bg-neutral-800 p-2 rounded">
+            <ul className="space-y-2">
+            {milestones[project.projectid.project_id] && milestones[project.projectid.project_id].length > 0 ? (
+              milestones[project.projectid.project_id].map(milestone => (
+                <li key={milestone.id} className="flex justify-between items-center bg-neutral-800 p-2 rounded">
                   <span>{milestone.milestone}</span>
                   <button
                     onClick={() => handleDeleteMilestone(milestone.id, project.id)}
@@ -143,13 +143,16 @@ const handleAddMilestone = async (e) => {
                     Delete
                   </button>
                 </li>
-              )) || <p className="text-gray-400">No milestones yet.</p>}
-            </ul>
+              ))
+            ) : (
+              <p className="text-neutral-300">No milestones yet.</p>
+            )}
+          </ul>
+
           </div>
         ))
       )}
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-neutral-800 p-6 rounded-lg w-full max-w-md">

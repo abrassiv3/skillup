@@ -139,10 +139,13 @@ useEffect(() => {
   return (
     <div className="w-full p-2">
       <h2 className="section-header text-2xl font-semibold">Milestones</h2>
-       <p>Project: {milestones.length > 0 ? milestones[0].projectid.title : 'Milestones'}</p> 
+      {milestones.length > 0 ? 
+      <div>
+       <p>Project: {milestones[0].projectid.title}</p> 
        <p className='font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl text-blue-400'>Status: {milestones[0].projectid.status}</p> 
+      </div> : '' }
       {milestones.length === 0 ? (
-        <div className='flex flex-col  gap-4 items-center'>
+        <div className='flex flex-col gap-4 items-center'>
           <p className='text-3xl'><strong>No milestones found for this project.</strong></p>
           <button onClick={() => navigate('/dashboard')}>Back to Active Posts</button>
         </div>

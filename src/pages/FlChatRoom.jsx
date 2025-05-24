@@ -1,6 +1,6 @@
 import Chat from "../components/Chat"
 
-const ChatRoom = () => {
+const FlChatRoom = () => {
   return (
     <div>
       <Chat/>
@@ -8,4 +8,4 @@ const ChatRoom = () => {
   )
 }
 
-export default ChatRoom
+export default FlChatRoom

@@ -1,29 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link} from 'react-router-dom';
-import { supabase } from '../supabaseClient'; // Ensure this path is correct
-import { userAuth } from '../context/AuthContext'; // Ensure this path is correct
+import { supabase } from '../supabaseClient';
+import { userAuth } from '../context/AuthContext';
 
 const Applications = () => {
   const navigate = useNavigate();
-  const { session } = userAuth(); // Get the current user session
+  const { session } = userAuth();
   const [applications, setApplications] = useState([]);
   const { jobId } = useParams();
   const [loading, setLoading] = useState(true);
 
-  // Effect to fetch applications when jobId changes or on initial load
-  useEffect(() => {
+   useEffect(() => {
     fetchApplications();
   }, [jobId]);
 
-  // Function to fetch applications from Supabase
-  const fetchApplications = async () => {
-    // Build the query to fetch applications
-    let query = supabase
+    const fetchApplications = async () => {
+      let query = supabase
       .from('applications')
       .select('*, freelancerid(userid, firstname, lastname), projectid(project_id, title, accepting)')
-      .eq('client_id', session.user.id); // Filter by the current client's ID
+      .eq('client_id', session.user.id);
 
-    // If a jobId is provided, filter applications for that specific project
     if (jobId) {
       query = query.eq('projectid', jobId);
     }
@@ -33,61 +29,54 @@ const Applications = () => {
     if (error) {
       console.error('Error fetching applications:', error);
     } else {
-      // Format the fetched data, ensuring a default status if not present
       const formatted = data.map(app => ({
         ...app,
         status: app.status || 'PENDING',
       }));
       setApplications(formatted);
     }
-    setLoading(false); // Set loading to false after data is fetched
+    setLoading(false);
   };
 
-  // Realtime listener for Supabase changes to the 'applications' table
   useEffect(() => {
     const channel = supabase
       .channel('applications-changes')
       .on(
         'postgres_changes',
         {
-          event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
+          event: '*',
           schema: 'public',
           table: 'applications',
         },
         (payload) => {
-          fetchApplications(); // Re-fetch applications on any change
+          fetchApplications();
         }
       )
-      .subscribe(); // Subscribe to the channel
+      .subscribe();
 
-    // Cleanup function to unsubscribe when the component unmounts
     return () => {
       channel.unsubscribe();
     };
-  }, [jobId]); // Re-run effect if jobId changes
+  }, [jobId]);
 
-  // Handler for approving an application
   const handleApprove = async (id) => {
     await supabase
       .from('applications')
-      .update({ status: 'APPROVED'}) // Update status to APPROVED
-      .eq('id', id); // Target the specific application by ID
+      .update({ status: 'APPROVED'})
+      .eq('id', id); 
 
-    fetchApplications(); // Re-fetch applications to update UI
+    fetchApplications();
   };
 
-  // Handler for rejecting an application
   const handleReject = async (id) => {
     await supabase
       .from('applications')
-      .update({ status: 'DENIED' }) // Update status to DENIED
-      .eq('id', id); // Target the specific application by ID
-    fetchApplications(); // Re-fetch applications to update UI
+      .update({ status: 'DENIED' })
+      .eq('id', id); 
+    fetchApplications();
   };
 
-  // Handler for kicking off a project (linking freelancer to project)
   const handleKickOff = async (projectId, freelancerId) => {
-    // Insert a new entry in 'freelancer-projects' to link them
     const { error: linkError } = await supabase
       .from('freelancer-projects')
       .insert([
@@ -98,7 +87,6 @@ const Applications = () => {
         }
       ]);
 
-    // Update the project to no longer accept applications
     const { error } = await supabase
       .from('projects')
       .update({ accepting: false })
@@ -114,13 +102,11 @@ const Applications = () => {
       return;
     }
 
-    navigate('/dashboard'); // Navigate to dashboard after successful kick-off
+    navigate('/dashboard');
   };
 
-  // Handler for creating a chatroom
   const handleCreateChat = async (freelancerId, clientId) => {
     try {
-      // Check if a chatroom already exists between these two   
       const { data: existingChatrooms, error: chatroomError } = await supabase
         .from('chatroom')
         .select('id')
@@ -132,12 +118,10 @@ const Applications = () => {
       }
 
       if (existingChatrooms && existingChatrooms.length > 0) {
-        // If a chatroom already exists, navigate to it
-        navigate(`/chat/${existingChatrooms[0].id}`);
+        navigate(`/client-chats/${existingChatrooms[0].id}`);
         return;
       }
 
-      // If no existing chatroom, create a new one
       const { data, error } = await supabase
         .from('chatroom')
         .insert([
@@ -146,7 +130,7 @@ const Applications = () => {
             client_id: clientId,
           }
         ])
-        .select(); // Select the newly inserted row to get its ID
+        .select();
 
       if (error) {
         console.error('Error creating chatroom:', error);
@@ -154,14 +138,13 @@ const Applications = () => {
       }
 
       if (data && data.length > 0) {
-        navigate(`/chat/${data[0].id}`); // Navigate to the newly created chatroom
+        navigate(`/client-chats/${data[0].id}`); 
       }
     } catch (error) {
       console.error('An unexpected error occurred:', error.message);
     }
   };
 
-  // Helper function to determine CSS class for status display
   const getStatusClass = (status) => {
     switch (status.toUpperCase()) {
       case 'APPROVED':
@@ -174,7 +157,6 @@ const Applications = () => {
     }
   };
 
-  // Display loading spinner while data is being fetched
   if (loading) {
     return (
       <div className='w-full p-2'>
@@ -222,7 +204,6 @@ const Applications = () => {
                   </div>
 
                   <div>
-                    {/* Fixed the template literal syntax here */}
                     <p className={`font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl ${getStatusClass(application.status)}`}>
                       <strong>Status:</strong> {application.status}
                     </p>
@@ -250,21 +231,28 @@ const Applications = () => {
                   {application.status === 'APPROVED' && (
                     <div className="p-2 flex flex-col gap-1.5 text-center rounded-xl bg-neutral-800">
                       <p className="text-xl">
-                        <strong>Kick-off project with {application.freelancerid.firstname}?</strong>
+                        <strong>
+                          {application.projectid.accepting === false
+                            ? 'Project Started'
+                            : `Kick-off project with ${application.freelancerid.firstname}?`}
+                        </strong>
                       </p>
-                      <button
-                        onClick={() => handleKickOff(application.projectid.project_id, application.freelancerid.userid)}
-                        hidden={application.projectid.accepting === false}
-                      >
-                        Start Project
-                      </button>
-                      {/* New Create Chat Button */}
-                      <button
-                        onClick={() => handleCreateChat(application.freelancerid.userid, session.user.id)}
-                        className="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-                      >
-                        Create Chat
-                      </button>
+
+                      <div className='flex gap-2'>
+                        <button
+                          onClick={() => handleKickOff(application.projectid.project_id, application.freelancerid.userid)}
+                          hidden={application.projectid.accepting === false}
+                          className='w-full'
+                        >
+                          Start Project
+                        </button>
+
+                        <button
+                          onClick={() => handleCreateChat(application.freelancerid.userid, session.user.id)}
+                          className='w-full btn-ter'
+                        > Chat
+                        </button>
+                        </div>
                     </div>
                   )}
                 </div>

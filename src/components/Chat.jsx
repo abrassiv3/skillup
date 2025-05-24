@@ -1,25 +1,30 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../supabaseClient'; // Ensure this path is correct
-import { userAuth } from '../context/AuthContext'; // Ensure this path is correct
+import { supabase } from '../supabaseClient';
+import { userAuth } from '../context/AuthContext';
 
-const FlChatRoom = () => {
-  const { chatid } = useParams(); // Get the chatroom ID from the URL parameters
-  const { session } = userAuth(); // Get the current user session
+const Chat = () => {
+  const { chatid } = useParams(); 
+  const { session } = userAuth(); 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const messagesEndRef = useRef(null); // Ref for auto-scrolling to the latest message
+  const messagesEndRef = useRef(null); 
 
   const currentUserId = session?.user?.id;
 
-  // Function to scroll to the bottom of the messages container
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Effect to fetch messages and set up real-time listener
+function linkify(text) {
+const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, (url) => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">${url}</a>`;
+  });
+}
+
   useEffect(() => {
     if (!currentUserId || !chatid) {
       setLoading(false);
@@ -27,8 +32,7 @@ const FlChatRoom = () => {
       return;
     }
 
-    // Function to fetch messages for the current chatroom
-    const fetchMessages = async () => {
+  const fetchMessages = async () => {
       try {
         const { data, error: fetchError } = await supabase
           .from('messages')
@@ -39,8 +43,10 @@ const FlChatRoom = () => {
             sender_id,
             sender:sender_id(userid, firstname, lastname)
           `)
-          .eq('chatroom_id', chatid) // Filter messages by the current chatroom ID
-          .order('created_at', { ascending: true }); // Order messages by time
+          .eq('chatroom_id', chatid)
+          .order('created_at', { ascending: true });
+
+          console.log(data)
 
         if (fetchError) {
           console.error('Error fetching messages:', fetchError);
@@ -58,23 +64,19 @@ const FlChatRoom = () => {
 
     fetchMessages();
 
-    // Set up real-time listener for new messages in this chatroom
     const channel = supabase
-      .channel(`chatroom-${chatid}-messages`) // Unique channel name for this chatroom
+      .channel(`chatroom-${chatid}-messages`)
       .on(
         'postgres_changes',
         {
-          event: 'INSERT', // Listen only for new message insertions
+          event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `chatroom_id=eq.${chatid}` // Filter changes to this specific chatroom
+          filter: `chatroom_id=eq.${chatid}` 
         },
         (payload) => {
-          // Add the new message to the state
-          // Supabase real-time payload for INSERT contains the new row in payload.new
           const newMessageData = payload.new;
 
-          // Fetch sender details if not already available in payload (Supabase real-time doesn't include joins directly)
           const getSenderDetails = async () => {
             const { data: senderData, error: senderError } = await supabase
               .from('users')
@@ -94,31 +96,27 @@ const FlChatRoom = () => {
               ...prevMessages,
               {
                 ...newMessageData,
-                sender: sender // Attach sender details
+                sender: sender 
               }
             ]);
           });
         }
       )
-      .subscribe(); // Subscribe to the channel
+      .subscribe(); 
 
-    // Cleanup function to unsubscribe when the component unmounts or chatid changes
     return () => {
       channel.unsubscribe();
     };
+  }, [chatid, currentUserId]);
 
-  }, [chatid, currentUserId]); // Re-run effect if chatid or currentUserId changes
-
-  // Effect to scroll to bottom whenever messages array updates
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // Handler for sending a new message
   const handleSendMessage = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
-    if (!newMessage.trim()) return; // Don't send empty messages
+    if (!newMessage.trim()) return;
 
     try {
       const { error: insertError } = await supabase
@@ -135,7 +133,7 @@ const FlChatRoom = () => {
         console.error('Error sending message:', insertError);
         setError(insertError.message);
       } else {
-        setNewMessage(''); // Clear the input field after sending
+        setNewMessage('');
       }
     } catch (err) {
       console.error('An unexpected error occurred while sending message:', err);
@@ -143,7 +141,6 @@ const FlChatRoom = () => {
     }
   };
 
-  // Display loading spinner
   if (loading) {
     return (
       <div className='w-full p-2'>
@@ -158,7 +155,6 @@ const FlChatRoom = () => {
     );
   }
 
-  // Display error message
   if (error) {
     return (
       <div className='w-full p-2 text-red-500'>
@@ -169,10 +165,10 @@ const FlChatRoom = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-neutral-100">
-      <h2 className="text-3xl font-bold p-4 bg-white shadow-md text-neutral-800">Chatroom: {chatid}</h2>
+    <div className="flex flex-col py-4 h-screen gap-1">
+      <h2 className="section-header">Chat</h2>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-neutral-900 rounded-lg">
         {messages.length === 0 ? (
           <p className="text-center text-neutral-600">No messages yet. Start the conversation!</p>
         ) : (
@@ -181,38 +177,39 @@ const FlChatRoom = () => {
               key={message.id}
               className={`flex ${message.sender_id === currentUserId ? 'justify-end' : 'justify-start'}`}
             >
+              
               <div
                 className={`max-w-xs md:max-w-md lg:max-w-lg p-3 rounded-lg shadow-md
                   ${message.sender_id === currentUserId
-                    ? 'bg-blue-500 text-white rounded-br-none'
-                    : 'bg-gray-300 text-neutral-800 rounded-bl-none'
+                    ? 'bg-green-900 text-white rounded-br-none'
+                    : 'bg-neutral-200 text-neutral-800 rounded-bl-none'
                   }`}
               >
-                <div className="font-semibold text-sm mb-1">
-                  {message.sender_id === currentUserId ? 'You' : `${message.sender?.firstname || 'Unknown'} ${message.sender?.lastname || ''}`}
+                <div className="flex gap-4 items-baseline justify-between font-semibold text-sm h-fit">
+                  {message.sender_id === currentUserId ? 'You' : `${message.sender?.firstname || 'Unknown'}`}
+                  <p className="text-xs pt-1 opacity-75">{new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                 </div>
-                <p className="break-words">{message.content}</p>
-                <div className="text-xs mt-1 opacity-75">
-                  {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
+                <div
+                  className="break-words"
+                  dangerouslySetInnerHTML={{ __html: linkify(message.content) }}
+                />
               </div>
             </div>
           ))
         )}
-        <div ref={messagesEndRef} /> {/* Empty div to scroll to */}
+        <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSendMessage} className="p-4 bg-white shadow-lg flex items-center gap-2">
+      <form onSubmit={handleSendMessage} className="p-4 bg-neutral-800 shadow-lg flex items-center gap-2">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message..."
-          className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 p-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Send
         </button>
@@ -221,4 +218,4 @@ const FlChatRoom = () => {
   );
 };
 
-export default FlChatRoom;
+export default Chat;
