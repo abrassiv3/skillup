@@ -72,7 +72,7 @@ const Sidebar = () => {
           <li><Link to="/drafts">My Drafts</Link></li>
           <li><Link to="/archive">Archived Posts</Link></li>
           <li><Link to="/client-profile">My Profile</Link></li>
-          <li><Link to="/client-chats">Client chats</Link></li>
+          <li><Link to="/client-chats">c</Link></li>
         </ul>
       </aside>
     </div>

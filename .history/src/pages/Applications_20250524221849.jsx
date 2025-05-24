@@ -120,7 +120,7 @@ const Applications = () => {
   // Handler for creating a chatroom
   const handleCreateChat = async (freelancerId, clientId) => {
     try {
-      // Check if a chatroom already exists between these two   
+      // Check if a chatroom already exists between these two users
       const { data: existingChatrooms, error: chatroomError } = await supabase
         .from('chatroom')
         .select('id')

@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient';
 
-const Sidebar = () => {
+const FlSidebar = () => {
   const [avatarUrl, setAvatarUrl] = useState(null);
   
     useEffect(() => {
@@ -51,8 +51,9 @@ const Sidebar = () => {
     };
 
   return (
-    <div className='col-span-1 md:col-span-2 pt-6 px-4 w-auto'>
-      <aside className='flex flex-col items-center gap-6'>
+    <div className='col-span-1 md:col-span-2 pt-6 px-4 w-auto sticky'>
+        <aside className='flex flex-col items-center gap-6'>
+
         <div className="avatar w-24 h-24 rounded-full overflow-hidden border border-neutral-700">
           {avatarUrl ? (
             <img src={avatarUrl} alt="User Avatar" className="w-full h-full object-cover" />
@@ -63,20 +64,16 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* Navigation Links */}
         <ul className='flex flex-col gap-4 items-center'>
-          <li><Link to="/createpost" className='sb-main inline-flex items-center outline px-4 py-2 rounded'>New Post</Link></li>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/posted-projects">Posted Projects</Link></li>
-          <li><Link to="/applications">Applications</Link></li>
-          <li><Link to="/drafts">My Drafts</Link></li>
-          <li><Link to="/archive">Archived Posts</Link></li>
-          <li><Link to="/client-profile">My Profile</Link></li>
-          <li><Link to="/client-chats">Client chats</Link></li>
+          <li><Link to="/jobposts" className='sb-main inline-flex items-center outline px-4 py-2 rounded'>Find a Job</Link></li>
+          <li><Link to="/fl-dashboard">Dashboard</Link></li>
+          <li><Link to="/my-applications">View Applications</Link></li>
+          <li><Link to="/fl-profile">My Profile</Link></li>
+          <li><Link to="/fl-profile">My Profile</Link></li>
         </ul>
       </aside>
     </div>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default FlSidebar
