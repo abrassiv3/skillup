@@ -30,9 +30,6 @@ import CurrentProject from "./pages/CurrentProject.jsx";
 import ProjectMilestones from "./pages/ProjectMilestones.jsx";
 import PostedProjects from "./pages/PostedProjects.jsx";
 import ClientsChats from "./pages/ClientChats.jsx";
-import ChatRoom from "./pages/ChatRoom.jsx";
-import FlClientsChats from "./components/ClientChats.jsx";
-import FlChatRoom from "./components/ChatRoom.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -58,8 +55,6 @@ createRoot(document.getElementById('root')).render(
           <Route path="/archive" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><ArchivedPosts /></ProtectedRoute></PrivateRoute> } />
           <Route path="/client-profile" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><ClientProfile /></ProtectedRoute></PrivateRoute> } />
           <Route path="/drafts" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><Drafts /></ProtectedRoute></PrivateRoute> } />
-          <Route path="/client-chats" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><ClientsChats /></ProtectedRoute></PrivateRoute> } />
-          <Route path="/client-chats/:chatid" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><ChatRoom /></ProtectedRoute></PrivateRoute> } />
         </Route>
 
         <Route element={<FlDashboardLayout />}>
@@ -70,8 +65,6 @@ createRoot(document.getElementById('root')).render(
           <Route path="/fl-profile" element={ <PrivateRoute><FlProfile /></PrivateRoute> } />
           <Route path="/my-applications" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Freelancer']}><FlApplications /></ProtectedRoute></PrivateRoute> } />
           <Route path="apply-to-job/:jobId" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Freelancer']}><ApplyToJob /></ProtectedRoute></PrivateRoute> } />
-          <Route path="/chats" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Freelancer']}><FlClientsChats /></ProtectedRoute></PrivateRoute> } />
-          <Route path="/chats/:chatid" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Freelancer']}><FlChatRoom /></ProtectedRoute></PrivateRoute> } />
         </Route>
 
         </Routes>
