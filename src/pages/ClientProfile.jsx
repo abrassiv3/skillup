@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
+import plus from '../assets/add.svg';
 
 const ClientProfile = () => {
   const [profile, setProfile] = useState({
@@ -41,27 +42,29 @@ const ClientProfile = () => {
   };
 
   const loadAvatar = (filePath) => {
-  if (!filePath) return;
+    if (!filePath) return;
 
-  if (filePath.startsWith('http')) {
-    setAvatarUrl(filePath);
-  } else {
     const { data, error } = supabase
       .storage
       .from('avatars')
       .getPublicUrl(filePath);
 
     if (data?.publicUrl) {
-      setAvatarUrl(data.publicUrl);
+      // Add cache-busting timestamp
+      setAvatarUrl(`${data.publicUrl}?t=${Date.now()}`);
     } else if (error) {
       console.error("Error fetching avatar URL:", error);
     }
+  };
+
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setAvatarFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarUrl(previewUrl);
   }
 };
-
-  const handleFileChange = (e) => {
-    setAvatarFile(e.target.files[0]);
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -114,62 +117,85 @@ const ClientProfile = () => {
 
   if (loading) {
           return (
+            <div className='w-full p-2'>
+              <h2 className='section-header text-2xl font-bold mb-6'>My Profile</h2>
               <div className="flex items-center justify-center h-screen bg-gradient-to-b">
               <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
               <p className="mt-4 text-xl font-medium text-neutral-200">Loading...</p>
               </div>
               </div>
+            </div>
           );
       }
 
   return (
-    <div className='w-full max-w-xl mx-auto p-4'>
-      <h2 className='section-header text-2xl font-bold mb-6'>My Profile</h2>
-
-      {formError && <p className="text-red-600">{formError}</p>}
-
-      {/* Avatar Display and Upload */}
-      <div className="avatar w-32 h-32 rounded-full overflow-hidden border border-gray-300 shadow-md mx-auto mb-4">
-        {avatarUrl ? (
-          <img src={avatarUrl} alt="Profile Avatar" className="w-full h-full object-cover" />
-        ) : (
-          <div className='flex items-center justify-center w-full h-full text-xl font-bold'>
-            AV
-          </div>
-        )}
-      </div>
-
-      <input type="file" onChange={handleFileChange} accept="image/*" />
-
-      {/* Editable Form */}
-      <form onSubmit={handleSubmit} className="space-y-4 ">
-        <div className='p-2'>
-          <label className="block">First Name</label>
-          <input
-            type="text"
-            name="firstname"
-            value={profile.firstname}
-            onChange={handleInputChange}
-            className="input border p-2 w-full"
-            required
-          />
+    <div className='w-full mx-auto p-4'>
+          <h2 className='section-header text-2xl font-bold mb-6'>My Profile</h2>
+    
+          <div>{formError && <p className="text-red-600 text-2xl text-center font-bold">{formError}</p>}</div>
+    
+          {/* Editable Form */}
+          <form onSubmit={handleSubmit} className="space-y-4 w-2/3 h-fit p-3 flex gap-4">
+            <div className='flex flex-col w-full'>
+              <div>
+                <h2 className='header text-3xl'>Update Your Personal Details</h2>
+              </div>
+              
+              <div className='py-2'>
+                <h2 className='header text-center'> Profile Picture</h2>
+                
+                <div className='flex flex-col items-center gap-2'>
+                  <div className='py-2'>
+  <h2 className='header text-center'> Profile Picture</h2>
+  <div className='flex flex-col items-center gap-2'>
+    <div className="avatar w-32 h-32 rounded-full overflow-hidden border border-gray-300 mx-auto">
+      {avatarUrl ? (
+        <img src={avatarUrl} alt="Profile Avatar" className="w-full h-full object-cover" />
+      ) : (
+        <div className='flex items-center justify-center w-full h-full text-xl font-bold bg-gray-200'>
+          AV
         </div>
-        <div className='p-2'>
-          <label className="block">Last Name</label>
-          <input
-            type="text"
-            name="lastname"
-            value={profile.lastname}
-            onChange={handleInputChange}
-            className="input border p-2 w-full"
-            required
-          />
-        </div>
+      )}
+    </div>
+  </div>
+</div>
 
-        <button type="submit" disabled={loading} className="flex flex-row justify-around">
-          {loading ? "Updating..." : "Update Profile"}
-        </button>
+
+                  <label className='flex items-center gap-2' htmlFor="avatar"><img src={plus} alt="add image" className='border-2 border-green-600 rounded-full'/> <p className='font-bold'>Change Picture</p></label>
+                  <input type="file" id='avatar' class="hidden" onChange={handleFileChange} accept="image/*" />
+                </div>
+              </div>
+    
+              <div className='py-2'>
+                <label className="header block">First Name</label>
+                <input
+                  type="text"
+                  name="firstname"
+                  value={profile.firstname}
+                  onChange={handleInputChange}
+                  className="input border py-2 w-full"
+                  required
+                />
+              </div>
+    
+              <div className='py-2'>
+                <label className="header block">Last Name</label>
+                <input
+                  type="text"
+                  name="lastname"
+                  value={profile.lastname}
+                  onChange={handleInputChange}
+                  className="input border py-2 w-full"
+                  required
+                />
+              </div>
+    
+              <button type="submit" disabled={loading} className="flex flex-row justify-around">
+                {loading ? "Updating..." : "Update Profile"}
+              </button>
+            </div>
+        
       </form>
     </div>
   );

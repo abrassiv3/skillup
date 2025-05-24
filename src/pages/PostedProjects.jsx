@@ -20,9 +20,10 @@ const PostedProjects = () => {
   const fetchJobPosts = async () => {
     const { data, error } = await supabase
       .from('projects')
-      .select('*, selectedCategory(category_name)')
+      .select('project_id, title, created_at, description, client_id(firstname, lastname), budget, selectedCategory(category_name), file_url, PublishedStatus, accepting')
       .eq('client_id', session.user.id)
-      .eq('status', 'COMPLETED')
+      .eq('PublishedStatus', 'TRUE')
+      .eq('accepting', 'TRUE');
 
     if (error) {
       console.log('Error fetching data: ', error);
@@ -61,7 +62,7 @@ const PostedProjects = () => {
       const { count, error } = await supabase
         .from('applications')
         .select('*', { count: 'exact', head: true })
-        .eq('project_id', project.project_id);
+        .eq('projectid', project.project_id);
 
       if (error) {
         console.log('Error counting applications for project', project.project_id, error);
@@ -90,7 +91,7 @@ const PostedProjects = () => {
   if (loading) {
           return (
             <div className='w-full p-2'>
-              <h2 className='section-header'>Archived Projects</h2>
+              <h2 className='section-header'>Posted Projects</h2>
               <div className="flex items-center justify-center h-screen bg-gradient-to-b">
               <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
@@ -105,7 +106,7 @@ const PostedProjects = () => {
 
   return (
     <div className='w-full p-2'>
-      <h2 className='section-header'>Archived Projects</h2>
+      <h2 className='section-header'>Posted Projects</h2>
       <ul className='columns-1 md:columns-2 gap-4'>
         {jobPosts.map((job) => (
           <li className=' break-inside-avoid py-3' key={job.project_id}>
@@ -115,7 +116,7 @@ const PostedProjects = () => {
                   {job.selectedCategory.category_name}
                 </h2>
                 <p className="px-3 py-1 font-bold w-fit text-sky-500 border border-blue-500 bg-neutral-800 rounded-2xl">
-                {job.status}
+                  Applications: {applicationCounts[job.project_id] ?? 0}
                 </p>
               </div>
               
@@ -149,10 +150,10 @@ const PostedProjects = () => {
               {job.file_url && (          
               <p className='py-2'><a href={job.file_url} download className='font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl'> View Files</a></p>)}
               
-              {/* <div className='flex flex-row justify-center gap-2'>
+              <div className='flex flex-row justify-center gap-2'>
                 <button className='w-full' onClick={() => navigate(`/applications/${job.project_id}`)}>View Applications</button>
                 <button className='btn-ter w-full' onClick={() => handlePublish(job.project_id)}>Move to Drafts</button>
-              </div> */}
+              </div>
               
             </div>
           </li>

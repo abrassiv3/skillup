@@ -37,9 +37,9 @@ const signup = () => {
   }
 
   return (
-    <div>
+    <div className='flex flex-col items-center'>
       <h1 className="skillupheader text-center pt-4 pb-4 text-2xl">SKILLUP</h1>
-      <form onSubmit={handleSignUp} className="max-w-md m-auto pt-24">
+      <form onSubmit={handleSignUp} className="max-w-md m-auto w-fit">
       <div className='input-container'>
         <div className='input-header'>
           <img className='icons back-arrow' src={backArrow} alt="back-arrow" onClick={() => navigate("/")} />

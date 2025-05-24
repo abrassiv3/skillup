@@ -7,7 +7,7 @@ const fetchJobPost = async () => {
       .select(`*, client_id(firstname, lastname), selectedCategory(category_name)`)
       .eq("PublishedStatus", "TRUE")
       .eq("accepting", "TRUE")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
 
     if (error) throw error;
 

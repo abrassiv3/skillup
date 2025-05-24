@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 export default function Welcome() {
   const {session} = userAuth();
   const [userName, setUserName] = useState('');
+  const [userType, setUserType] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,14 +14,15 @@ export default function Welcome() {
         
         const { data, error } = await supabase
           .from('users')
-          .select('firstname')
+          .select('firstname, usertype')
           .eq('userid', session.user.id)
           .single();
 
         if (error) {
           console.error('Error fetching user name:', error);
         } else {
-          setUserName(data.firstname || '');
+          setUserName(data.firstname || '')
+          setUserType(data.usertype|| '');
         }
       }
       setLoading(false);
@@ -41,7 +43,10 @@ export default function Welcome() {
     }
 
   return (
-    <h1 className='welcome welcome-header'>Welcome {userName}!</h1>
+    <div>
+      <h1 className='welcome welcome-header'>Welcome, {userName}!</h1>
+      <p className='py-1 px-3 m-0.5 text-green-500 bg-neutral-800 border border-green-500 rounded-2xl w-fit'>{userType}</p>
+    </div>
   );
 }
 

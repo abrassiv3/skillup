@@ -1,13 +1,9 @@
 TODO Creating the user form to obtain D.O.B. We need workers above 18, so this needs to be present
-TODO Freelancer skillset selector
-TODO Settings page for both freelancer's and client's dashboard
-TODO Create REST API
-TODO the Review post section should fetch the specific unpublished post
 TODO Errors for signup and signin should reflect on the form
-TODO The freelancer should be able to apply, then the client to view the application, and approve or invite to chat
+TODO invite to chat
 TODO The Archived posts should include a completed tag, such that there's a count function for the freelancer to display the completed posts
 TODO Maybe a rating system, for freelancers?
-TODO CONNECT TO THE BUCKET
+
 
 NOTES USE SETLOADING WHEN UPDATING UI TO SHOW REQUEST IS BEING DONE
 

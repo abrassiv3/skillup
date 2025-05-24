@@ -1,160 +1,185 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { useEffect, useState } from 'react';
 import { userAuth } from '../context/AuthContext';
+import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 const ActivePosts = () => {
   const { session } = userAuth();
-  const [jobPosts, setJobPosts] = useState([]);
-  const [skills, setSkills] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [milestones, setMilestones] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [newMilestone, setNewMilestone] = useState('');
+  const [currentProjectId, setCurrentProjectId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [applicationCounts, setApplicationCounts] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (session) {
-      fetchJobPosts();
-    }
-  }, [session]);
+    fetchProjects();
+  }, []);
 
-  const fetchJobPosts = async () => {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('project_id, title, created_at, description, client_id(firstname, lastname), budget, selectedCategory(category_name), file_url, PublishedStatus, accepting')
-      .eq('client_id', session.user.id)
-      .eq('PublishedStatus', 'TRUE')
-      .eq('accepting', 'TRUE');
+const fetchProjects = async () => {
+  setLoading(true);
 
-    if (error) {
-      console.log('Error fetching data: ', error);
-    } else {
-      setJobPosts(data);
-      fetchSkills(data);
-      fetchAllApplicationCounts(data);
-      setLoading(false);
-    }
-  };
+  const { data, error } = await supabase
+    .from('freelancer-projects')
+    .select('*, projectid(project_id, title, status)')
+    .eq('client_id', session.user.id);
 
-  const fetchSkills = async (projects) => {
-    const allSkills = {};
+  if (error) {
+    console.error('Error fetching projects:', error);
+  } else {
+    // Filter only projects with status === 'ONGOING'
+    const ongoing = data.filter(project => project.projectid?.status === 'ONGOING');
 
-    for (const project of projects) {
-      const { data, error } = await supabase
-        .from('project_skills')
-        .select('skill:skill_id(skill_name)')
-        .eq('project_id', project.project_id);
+    setProjects(ongoing);
 
-      if (error) {
-        console.log('Error fetching skills for project', project.project_id, error);
-        continue;
-      }
-
-      allSkills[project.project_id] = data.map((item) => item.skill.skill_name);
-    }
-
-    setSkills(allSkills);
-  };
-
-  const fetchAllApplicationCounts = async (projects) => {
-    const counts = {};
-    for (const project of projects) {
-      const { count, error } = await supabase
-        .from('applications')
-        .select('*', { count: 'exact', head: true })
-        .eq('project_id', project.project_id);
-
-      if (error) {
-        console.log('Error counting applications for project', project.project_id, error);
-        continue;
-      }
-
-      counts[project.project_id] = count;
-    }
-    setApplicationCounts(counts);
-  };
-
-  const handlePublish = async (project_id) => {
-    const { error } = await supabase
-      .from('projects')
-      .update({ PublishedStatus: 'FALSE', accepting: 'FALSE' }) 
-      .eq('project_id', project_id);
-  
-    if (error) {
-      console.error('Failed to publish:', error);
-    } else {
-      alert('Moved to Drafts.');
-      fetchJobPosts(); 
-    }
+    // Fetch milestones only for ongoing projects
+    ongoing.forEach(project => fetchMilestones(project.projectid.project_id));
   }
-  
-  if (loading) {
-          return (
-              <div className="flex items-center justify-center h-screen bg-gradient-to-b">
-              <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
-              <p className="mt-4 text-xl font-medium text-neutral-200">Loading...</p>
-              </div>
-              </div>
-          );
-      }
 
-  ;
+  setLoading(false);
+};
+
+  const fetchMilestones = async (projectId) => {
+    const { data, error } = await supabase
+      .from('milestones')
+      .select('id, milestone')
+      .eq('projectid', projectId);
+
+    if (error) {
+      console.error(`Error fetching milestones for project ${projectId}:`, error);
+    } else {
+      setMilestones(prev => ({ ...prev, [projectId]: data }));
+    }
+  };
+
+  const handleOpenModal = (project) => {
+    setCurrentProjectId(project);
+    setShowModal(true);
+  };
+
+const handleAddMilestone = async (e) => {
+  e.preventDefault();
+  if (!newMilestone) return;
+
+  const { error } = await supabase
+    .from('milestones')
+    .insert([{
+      milestone: newMilestone,
+      projectid: currentProjectId.projectid.project_id,
+      fpid: currentProjectId.id
+    }]);
+
+
+  if (error) {
+    console.error('Error adding milestone:', error);
+  } else {
+    fetchMilestones(currentProjectId.projectid.project_id);
+    setNewMilestone('');
+    setShowModal(false);
+  }
+};
+
+
+  const handleDeleteMilestone = async (milestoneId, projectId) => {
+    const { error } = await supabase
+      .from('milestones')
+      .delete()
+      .eq('id', milestoneId);
+    if (error) {
+      console.error('Error deleting milestone:', error);
+    } else {
+      fetchMilestones(projectId);
+    }
+  };
+
+
+  if (loading) {
+        return (
+          <div className='w-full p-2'>
+            <h2 className="section-header text-2xl font-semibold">Active Posts</h2>
+            <div className="flex items-center justify-center h-screen bg-gradient-to-b">
+            <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+            <p className="mt-4 text-xl font-medium text-neutral-200">Loading...</p>
+            </div>
+            </div>
+          </div>
+        );
+    }
 
   return (
-    <div className='w-full p-2'>
-      <h2 className='section-header'>Posted Projects</h2>
-      <ul className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-        {jobPosts.map((job) => (
-          <li key={job.project_id}>
-            <div className="go-to-jobs-card ">
-              <div className="flex flex-row justify-between">
-                <h2 className="py-1 px-3 font-bold w-fit text-amber-500 border border-amber-500 bg-neutral-800 rounded-2xl">
-                  {job.selectedCategory.category_name}
-                </h2>
-                <p className="px-3 py-1 font-bold w-fit text-sky-500 border border-blue-500 bg-neutral-800 rounded-2xl">
-                  Applications: {applicationCounts[job.project_id] ?? 0}
-                </p>
-              </div>
-              
-              <h2 className="text-left font-bold p-0.5 pl-0 border-b-2 border-b-neutral-700">{job.title}</h2>
-              <p className='text-left border-b-2 border-b-neutral-700'><strong>Created on:</strong> {new Date(job.created_at).toLocaleString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true
-                    })}
-                  </p>
+    <div className="w-full pb-8 p-2">
+      <h2 className="section-header">Active Posts</h2>
 
-              <div className='text-left' dangerouslySetInnerHTML={{ __html: job.description.replace(/\n/g, '<br/>') }}></div>
+      {projects.length === 0 ? (
+        <p className="text-gray-400">No active projects found.</p>
+      ) : (
+        projects.map(project => (
+          <div key={project.projectid} className="p-4 rounded-lg bg-neutral-900">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold text-white">{project.projectid.title}</h3>
               
-              <div className='py-2 border-y-2 border-y-neutral-700'>
-                <p className="text-left py-0.5 "><strong>Skills</strong></p>
-                  <div className="flex flex-row justify-between gap-2">
-                  <ul className="flex flex-row justify-left gap-2">
-                    {(skills[job.project_id] || []).map((skill, index) => (
-                      <strong><li className="py-2 px-3 m-0.5 text-green-500 bg-neutral-800 border border-green-500 rounded-2xl" key=  {index}>{skill}</li></strong>
-                      ))}
-                  </ul>
-                    
-                  <p className="font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl">$  {job.budget}</p>
-                </div>
+              <div className='flex gap-4'>
+              <button
+                onClick={() => handleOpenModal(project)}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                + Add Milestone
+              </button>
+              <button className='btn-ter' onClick={() => {navigate(`/project/${project.projectid.project_id}`)}}>View Progress</button>
               </div>
 
-              {job.file_url && (          
-              <p className='py-2'><a href={job.file_url} download className='font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl'> View Files</a></p>)}
-              
-              <div className='flex flex-row justify-center gap-2'>
-                <button onClick={() => navigate(`/applications/${job.project_id}`)}>View Applications</button>
-                <button className='btn-ter' onClick={() => handlePublish(job.project_id)}>Move to Drafts</button>
-              </div>
-              
             </div>
-          </li>
-        ))}
-      </ul>
+            
+            <ul className="mt-4 space-y-2">
+              {milestones[project.projectid.project_id]?.map(milestone => (
+                <li key={milestone.id} className="flex justify-between items-center  bg-neutral-800 p-2 rounded">
+                  <span>{milestone.milestone}</span>
+                  <button
+                    onClick={() => handleDeleteMilestone(milestone.id, project.id)}
+                    className="btn-sec"
+                  >
+                    Delete
+                  </button>
+                </li>
+              )) || <p className="text-gray-400">No milestones yet.</p>}
+            </ul>
+          </div>
+        ))
+      )}
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-neutral-800 p-6 rounded-lg w-full max-w-md">
+            <h2 className="section-header text-2xl font-semibold text-white">Add Milestone</h2>
+            <form onSubmit={handleAddMilestone} className="flex flex-col p-4 gap-4">
+              <textarea
+                type="text"
+                placeholder="Set a new milestone"
+                value={newMilestone}
+                onChange={(e) => setNewMilestone(e.target.value)}
+              />
+              <div className="flex justify-even gap-4">
+                <button
+                  type="submit"
+                  className="w-full"
+                >
+                  Add
+                </button>
+                <button
+                  type="button"
+                  className="btn-sec w-full"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

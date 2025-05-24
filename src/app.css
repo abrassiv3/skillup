@@ -28,15 +28,14 @@
     flex-direction: row;
 }
 
-.nav-bar-container {
-    padding: 10px;
-    justify-content: center;
+.nav-bar-link {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px;
 }
 
-.button-container {
-    gap: 20px;
-    justify-content: space-between;
-}
+.go-to-jobs-title, .go-to-jobs-description {
+  font-family: "Raleway", sans-serif;
+} 
 
 .go-to-jobs-card {
     display: flex;
@@ -52,39 +51,49 @@
 }
 
 .go-to-jobs-title {
-    font-family: "Space Grotesk", sans-serif;
-    font-weight: 600;
-    font-size: 25px;
-    color: #64ff79;
+  font-weight: 800;
+  color: #64ff79;
+}
+
+.go-to-jobs-description{ 
+  font-size: 25px; 
+  font-weight: 600;
 }
 
 .go-to-jobs-link {
-    font-family: "Gabarito", sans-serif;
-    font-size: 20px;
-    width: fit-content;
-    /* color: #007210; */
+  font-family: "Gabarito", sans-serif;
+  font-size: 25px;
+  width: fit-content;
 }
 
 .go-to-jobs-opportunity {
-    color: #00f7ff;
-}
-
-.createPostForm {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  font-family: "General Sans", sans-serif;
+  color: #00f7ff;
 }
 
 .formSection{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    font-family: "Gabarito", sans-serif;
 }
 
-input::placeholder, textarea::placeholder {
+input, textarea, select, option {
+    border: .2px solid #007997;
+    border-radius: 4px;
+    padding: 8px;
+    font-family: "Raleway", sans-serif ;
+    font-weight: 600;
+}
+
+input::placeholder, textarea::placeholder, .select-default {
     font-family: "General Sans", serif;
     font-style: italic;
+    font-weight: 500;
+}
+
+textarea {
+  padding-block: 4px;
+  resize: none;
 }
 
 .formContainer {
@@ -96,26 +105,14 @@ input::placeholder, textarea::placeholder {
     font-weight: 700;
 }
   
-input, textarea, select, option {
-    border: .2px solid #007997;
-    border-radius: 4px;
-    padding: 8px;
-  }
 
-input, textarea {
-  margin-top: 2px;
-}
-
-textarea {
-  height: 150px;
-  resize: none;
-}
 
 .skillupheader{
   font-family: "Clash Display", sans-serif;
   font-weight: 700;
-  font-size: 100px;
+  /* font-size: 100px; */
 }
+
 /* Dashboard CSS */
 .btn-sec {
   background-color: #8d2323;
@@ -139,6 +136,7 @@ textarea {
   color: #000;
   cursor: pointer;
 }
+
 /* CreatePost CSS */
 option {
   color: #fff;
@@ -213,13 +211,4 @@ transition: .45s;
   color: white;
   height: 100%;
   overflow-y: auto;
-}
-
-.header {
-  height: 60px;
-  background-color: #222;
-  color: white;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
 }

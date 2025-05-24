@@ -65,9 +65,9 @@ const JobCard = () => {
 
   return (
     <div>
-      <ul className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      <ul className='columns-1 md:columns-2 gap-4'>
         {jobPosts.map((job) => (
-          <li key={job.project_id}>
+          <li className='break-inside-avoid py-4' key={job.project_id}>
             <div className="go-to-jobs-card m-1">
               <div className="flex flex-row justify-between">
                 <h2 className="py-1 px-3 font-bold w-fit bg-neutral-800 text-amber-500 border border-amber-500 rounded-2xl">
@@ -98,7 +98,7 @@ const JobCard = () => {
                     ))}
                 </ul>
                 
-                <p className="font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl">${job.budget}</p>
+                <p className="font-bold py-2 w-1/7 px-3 m-0.5 text-emerald-400  bg-neutral-800 border border-emerald-400 rounded-2xl">${job.budget}</p>
               </div>
 
               {job.file_url && (          

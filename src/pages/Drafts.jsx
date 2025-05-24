@@ -29,7 +29,6 @@ const Drafts = () => {
     } else {
       setJobPosts(data);
       fetchSkills(data);
-      setLoading(false);
     }
   };
   
@@ -52,6 +51,7 @@ const Drafts = () => {
     }
   
     setSkills(allSkills);
+    setLoading(false);
   };
   
   const handleDelete = async (projectId) => {
@@ -108,25 +108,25 @@ if (loading) {
                 <p className="py-1 px-3 font-bold w-fit bg-neutral-800  text-amber-500 border border-amber-500 rounded-2xl">  {jobPosts.selectedCategory.category_name}</p>
               </div>
 
-              <h2 className='text-left font-bold p-0.5 pl-0 border-b border-b-neutral-500'>Project Title: {jobPosts.title}</h2>
-              <p className="text-left font-bold py-0.5 pl-0 border-b border-b-neutral-500">Created on: {new Date(jobPosts.created_at).toLocaleString('en-US', {weekday: 'long',
+              <h2 className='text-left font-bold py-0.5 border-b border-b-neutral-500'>Project Title: {jobPosts.title}</h2>
+              <p className="text-left font-bold py-0.5 border-b border-b-neutral-500">Created on: {new Date(jobPosts.created_at).toLocaleString('en-US', {weekday: 'long',
                       year: 'numeric',
                       month: 'short',
                       day: 'numeric',
                       hour: '2-digit',
                       minute: '2-digit',
                       hour12: true})}</p>
-              <div className='text-left' dangerouslySetInnerHTML={{ __html: jobPosts.description.replace(/\n/g, '<br/>') }}></div>
+              <div className='text-left border-b border-b-neutral-500' dangerouslySetInnerHTML={{ __html: jobPosts.description.replace(/\n/g, '<br/>') }}></div>
 
               <p className="text-left py-0.5"><strong>Skills</strong></p>
-                <div className="flex flex-row justify-between gap-2">
+                <div className="flex flex-row justify-between items-center gap-2 ">
                 <ul className="flex flex-row justify-left gap-2">
                   {(skills[jobPosts.project_id] || []).map((skill, index) => (
                     <strong><li className="py-2 px-3 m-0.5 text-green-500 bg-neutral-800 border border-green-500 rounded-2xl" key={index}>{skill}</li></strong>
                     ))}
                 </ul>
                 
-                <p className="font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl">${jobPosts.budget}</p>
+                <p className="font-bold text-center py-0.5 h-fit w-1/7 px-3 m-0.5 text-emerald-400 bg-neutral-800 border border-emerald-400 rounded-2xl">${jobPosts.budget}</p>
               </div>
 
             
@@ -134,11 +134,11 @@ if (loading) {
               <p className='py-2'><a href={jobPosts.file_url} download className='font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl'> View Files</a></p>)}
 
             <div className='flex flex-row justify-center gap-5'>
-              <button className='w-1/3' onClick={() => handlePublish(jobPosts.project_id)}    >Post</button>
+              <button className='w-1/3' onClick={() => handlePublish(jobPosts.project_id)}>Post</button>
 
-              <button className='w-1/3' onClick={() => navigate(`/createpost/${jobPosts.project_id}`)}>Edit</button>
+              <button className='w-1/3 btn-ter' onClick={() => navigate(`/createpost/${jobPosts.project_id}`)}>Edit</button>
               
-              <button className='w-1/3 btn-sec' onClick={() => handleDelete(jobPosts.project_id)}   >Delete</button>
+              <button className='w-1/3 btn-sec' onClick={() => handleDelete(jobPosts.project_id)}>Delete</button>
             </div>
             
             </div>

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams} from 'react-router-dom';
+import { useParams, useNavigate, Link} from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { userAuth } from '../context/AuthContext';
 
 const Applications = () => {
+  const navigate = useNavigate();
+  const { session } = userAuth();
   const [applications, setApplications] = useState([]);
   const { jobId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -10,13 +13,17 @@ const Applications = () => {
   useEffect(() => {
     fetchApplications();
   }, [jobId]);
-  // Fetch initial data
   const fetchApplications = async () => {
-      const { data, error } = await supabase
-        .from('applications')
-        .select('id, created_at, status, proposal, freelancer_id(firstname, lastname), project_id(title)')
-        .eq("project_id", jobId)
-        .order('created_at', { ascending: true });
+      let query = supabase
+    .from('applications')
+    .select('*, freelancerid(userid, firstname, lastname), projectid(project_id, title, accepting)')
+    .eq('client_id', session.user.id);
+
+  if (jobId) {
+    query = query.eq('projectid', jobId);
+  }
+
+  const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching applications:', error);
@@ -37,89 +44,165 @@ useEffect(() => {
     .on(
       'postgres_changes',
       {
-        event: '*', // insert | update | delete
+        event: '*',
         schema: 'public',
         table: 'applications',
       },
       (payload) => {
-        // Instead of trying to patch the state manually, just refetch
         fetchApplications();
       }
     )
     .subscribe();
 
   return () => {
-    supabase.removeChannel(channel);
-  };
-}, [jobId]);  // always add jobId dependency to ensure it fetches for the correct project
+    channel.unsubscribe();
 
+  };
+}, [jobId]);
 
   const handleApprove = async (id) => {
-    await supabase.from('applications').update({ status: 'APPROVED' }).eq('id', id);
+    await supabase
+      .from('applications')
+      .update({ status: 'APPROVED'})
+      .eq('id', id)
+
     fetchApplications();
   };
 
   const handleReject = async (id) => {
-    await supabase.from('applications').update({ status: 'DENIED' }).eq('id', id);
+    await supabase
+      .from('applications')
+      .update({ status: 'DENIED' })
+      .eq('id', id);
     fetchApplications();
   };
 
+  const handleKickOff = async (projectId, freelancerId) => {
+     const { error: linkError } = await supabase
+    .from('freelancer-projects')
+    .insert([
+      {
+        client_id: session.user.id,
+        projectid: projectId,
+        freelancer_id: freelancerId
+      }
+    ]);
+    
+    const { error } = await supabase
+      .from('projects')
+      .update({ accepting: false })
+      .eq('project_id', projectId); 
+      
+    if (error) {
+      console.error('Error kicking off project:', error);
+      return;
+    }
+
+  if (linkError) {
+    console.error('Error linking freelancer to project:', linkError);
+    return;
+  }
+
+    navigate('/dashboard');
+};
+
+
+const getStatusClass = (status) => {
+  switch (status.toUpperCase()) {
+    case 'APPROVED':
+      return 'text-green-500 border-green-500';
+    case 'DENIED':
+      return 'text-red-500 border-red-500';
+    case 'PENDING':
+    default:
+      return 'text-yellow-500 border-yellow-500';
+  }
+};
+
   if (loading) {
         return (
+          <div className='w-full p-2'>
+            <h2 className="section-header text-2xl font-semibold">Applications</h2>
             <div className="flex items-center justify-center h-screen bg-gradient-to-b">
             <div className="flex flex-col items-center">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
             <p className="mt-4 text-xl font-medium text-neutral-200">Loading...</p>
             </div>
             </div>
+          </div>
         );
     }
 
   return (
     <div>
-      <div className="">
-        <h2 className="section-header text-2xl font-semibold mb-4">Applications</h2>
+      <div className="pb-4 p-2 gap-2">
+        <h2 className="section-header text-2xl font-semibold">Applications</h2>
         {applications.length === 0 ? (
           <p>No applications available.</p>
         ) : (
-          <ul className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ul className="columns-1 md:columns-2 gap-4">
             {applications.map(application => (
-              <li key={application.id}>
-                <div className="border p-4 rounded-xl bg-neutral-700 text-white">
-                  <p><strong>Project:</strong> {application.project_id.title}</p>
-                  <p>
-                     <strong>Sent on:</strong> {new Date(application.created_at).toLocaleString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true
-                    })}
+              <li className='break-inside-avoid py-3' key={application.id}>
+                <div className="flex flex-col gap-2 p-4 rounded-xl bg-neutral-700 text-white h-fit">
+                  <div>
+                    <p><strong>Project:</strong> {application.projectid.title}</p>
+                    <p>
+                       <strong>Applied on:</strong> {new Date(application.created_at).toLocaleString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                      })}
+                    </p>
+                    <p><strong>Freelancer:</strong> {application.freelancerid.firstname} {application.freelancerid.lastname}</p>
+                  </div>
+
+                  <div>
+                    <p><strong>Proposal:</strong></p>
+                    <div dangerouslySetInnerHTML={{ __html: application.proposal.replace(/\n/g, '<br/>') }}></div>
+                  </div>
+
+                  <div>
+                    <p className={`font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl ${getStatusClass(application.status)}`}>
+                    <strong>Status:</strong> {application.status}
                   </p>
+                  </div>
 
-                  <p><strong>Freelancer:</strong> {application.freelancer_id.firstname} {application.freelancer_id.lastname}</p>
-                  <p><strong>Proposal:</strong></p>
-                  <div dangerouslySetInnerHTML={{ __html: application.proposal.replace(/\n/g, '<br/>') }}></div>
-
-                  <p className='border-t border-neutral-500 mt-2'><strong>Status:</strong> {application.status}</p>
-                  <div className="flex space-x-4 mt-4">
+                  {application.projectid.accepting === true && (
+                    <div className="flex gap-3 space-x-4 rounded-xl p-2 bg-neutral-800">
                     <button
+                      className='w-full'
                       onClick={() => handleApprove(application.id)}
-                      disabled={application.status === 'APPROVED'}
-                      className={`px-4 py-2 rounded ${application.status === 'APPROVED' ? 'bg-gray-400' : 'bg-green-500 text-white'}`}
+                      disabled={application.status === 'APPROVED'|| !application.projectid.accepting}
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleReject(application.id)}
-                      disabled={application.status === 'DENIED'}
-                      className={`btn-sec px-4 py-2 rounded ${application.status === 'DENIED' ? 'bg-gray-400' : 'bg-red-500 text-white'}`}
+                      disabled={application.status === 'DENIED' }
+                      className={`btn-sec w-full`}
                     >
                       Reject
                     </button>
                   </div>
+                  )}                  
+
+                  {application.status === 'APPROVED' && (
+                    <div className="p-2 flex flex-col gap-1.5 text-center rounded-xl bg-neutral-800">
+                      <p className="text-xl">
+                        <strong>Kick-off project with {application.freelancerid.firstname}?</strong>
+                      </p>
+                      <button
+                        onClick={() => handleKickOff(application.projectid.project_id, application.freelancerid.userid)}
+                        hidden={application.projectid.accepting === false}
+                      >
+                        Start Project
+                      </button>
+                    </div>
+                  )}
                 </div>
               </li>
             ))}

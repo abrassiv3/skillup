@@ -1,6 +1,7 @@
 import { supabase } from "../supabaseClient";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import plus from '../assets/add.svg';
 import "../index.css";
 
 const CreateUser = () => {
@@ -8,22 +9,26 @@ const CreateUser = () => {
   const [userType, setUserType] = useState('');
   const [firstname, setFirstName] = useState('');
   const [lastname, setLastName] = useState('');
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [uploadedPictureUrl, setUploadedPictureUrl] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
   const [formError, setFormError] = useState(null);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setProfilePicture(file);
-  };
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setAvatarFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarUrl(previewUrl);
+  }
+};
 
-  const uploadProfilePicture = async () => {
-    if (!profilePicture) return null;
+  const uploadAvatar = async () => {
+    if (!avatarFile) return null;
 
-    const fileName = `${Date.now()}_${profilePicture.name}`;
+    const fileName = `${Date.now()}_${avatarFile.name}`;
     const { data, error } = await supabase.storage
       .from('avatars')
-      .upload(fileName, profilePicture);
+      .upload(fileName, avatarFile);
 
     if (error) {
       console.error("Error uploading profile picture:", error);
@@ -46,13 +51,13 @@ const CreateUser = () => {
       return;
     }
 
-    const profilePictureUrl = await uploadProfilePicture();
+    const avatarUrl = await uploadAvatar();
 
     if (formError) return;
 
     const { data, error, status } = await supabase
       .from('users')
-      .insert([{ firstname, lastname, usertype: userType, profile_picture: profilePictureUrl }]);
+      .insert([{ firstname, lastname, usertype: userType, profile_picture: avatarUrl }]);
 
     if (error) {
       if (status === 409) {
@@ -63,7 +68,7 @@ const CreateUser = () => {
       console.error(error);
     } else {
       setFormError(null);
-      if (userType === 'client') {
+      if (userType === 'Client') {
         navigate('/dashboard');
       } else {
         navigate('/update-profile');
@@ -72,23 +77,26 @@ const CreateUser = () => {
   };
 
   return (
-    <div className="formcontainer">
-      <form id="setuserform" onSubmit={handleSubmit}>
-        <div className="input-container"></div>
-          <h1 className="header text-center">Tell us more <br /> about yourself</h1>
-          
-          <label className="label" htmlFor="profile-picture">Profile Picture</label>
-          <input
-            type="file"
-            id="profile-picture"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-          {uploadedPictureUrl && (
-            <div>
-              <img src={uploadedPictureUrl} alt="Uploaded Profile" className="profile-preview" />
-              <button type="button" onClick={() => setUploadedPictureUrl(null)}>Change Picture</button>
+    <div className="flex flex-col p-8 items-center ">
+      <form id="setuserform" className="flex flex-col gap-2 p-3" onSubmit={handleSubmit}>
+        <h1 className="section-header text-center">Tell us more <br /> about yourself</h1>
+        <label className='flex items-center gap-2' htmlFor="avatar"><img src={plus} alt="add image" className='border-2 border-green-600 rounded-full'/> <p className='font-bold'>Add Profile Picture</p></label>
+        <input type="file" id='avatar' class="hidden" onChange={handleFileChange} accept="image/*" />
+        {avatarUrl && (
+          <div className='py-2'>
+            <h2 className='header text-center'> Profile Picture</h2>
+            <div className='flex flex-col items-center gap-2'>
+              <div className="avatar w-32 h-32 rounded-full overflow-hidden border border-gray-300 mx-auto">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Profile Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <div className='flex items-center justify-center w-full h-full text-xl font-bold bg-gray-200'>
+                    AV
+                  </div>
+                )}
+              </div>
             </div>
+          </div>
           )}
 
           <label className="label" htmlFor="first-name">First Name</label>

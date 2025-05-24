@@ -41,7 +41,7 @@ const DashboardHeader = () => {
         </p>
       </div>
       <div>
-        <button onClick={handleSignOut} className='btn-sec border inline-block px-4 py-3'>Sign out</button>
+        <button onClick={handleSignOut} className='btn-sec px-4 py-3'>Sign out</button>
       </div>
     </div>
   )

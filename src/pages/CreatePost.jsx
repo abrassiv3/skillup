@@ -78,6 +78,7 @@ const CreatePost = () => {
       .from("skills")
       .select("skill_id, skill_name")
       .eq("category_id", categoryId);
+      
 
     if (data) {
       setSkillsList(data.map(skill => ({
@@ -101,7 +102,7 @@ const CreatePost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !description || !selectedCategory || !budget) {
+    if (!title || !description || !selectedCategory || !budget || !selectedSkills.length) {
       setFormError('Please fill in the required fields');
       return;
     }
@@ -191,28 +192,42 @@ const CreatePost = () => {
     }
   };
 
+
   return (
-    <div className='formSection '>
-      <div className='formContainer w-2/3 '>
-        <form onSubmit={handleSubmit} className='createPostForm p-4'>
-          <h2 className='createPostHeading'>{id ? 'Edit Project' : 'New Project'}</h2>
-          {formError && <p className="error text-red-600 text-center text-xl">{formError}</p>}
+    <div className='p-2 pb-4'>
+      <h1 className="section-header">{id ? 'Edit Project' : 'Start A New Project'}</h1>
+      <div className='w-2/3 '>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-2 p-4'>
+          {/* <h2 className='createPostHeading'>{id ? 'Edit Project' : 'New Project'}</h2> */}
+          {formError && <p className="error font-bold text-red-600 text-center text-xl">{formError}</p>}
 
-          <label>Project Title</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <label className="header text-2xl">Project Title</label>
+          <input 
+            type="text" 
+            value={title} 
+            onChange={(e) => setTitle(e.target.value)} 
+            placeholder="Add a title"
+          />
 
-          <label>Description</label>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
+          <label className="header text-2xl">Description</label>
+          <textarea 
+            value={description} 
+            onChange={(e) => setDescription(e.target.value)} 
+            placeholder="Add your project description"
+            className="w-full h-full"
+            wrap="soft"
+            required
+          />
 
-          <label>Category</label>
+          <label className="header text-2xl">Category</label>
           <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
-            <option value="">Select Category</option>
+            <option className="select-default">Select Category</option>
             {category.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
 
-          <label>Skills Required</label>
+          <label className="header text-2xl">Skills Required</label>
           <div className="skills-chip-container">
             {skillsList.map(skill => (
               <button
@@ -226,7 +241,7 @@ const CreatePost = () => {
             ))}
           </div>
 
-          <label>File (Optional)</label>
+          <label className="header text-2xl">File (Optional)</label>
 
           {existingFileUrl && !deleteExistingFile && (
             <div>
@@ -236,7 +251,7 @@ const CreatePost = () => {
           )}
           <input type="file" onChange={handleFileChange} />
 
-          <label>Budget</label>
+          <label className="header text-2xl">Budget</label>
           <input type="number" placeholder="$" value={budget} onChange={(e) => setBudget(e.target.value)} />
 
           <button type="submit">{id ? 'Update' : 'Next'}</button>

@@ -148,76 +148,102 @@ const FreelancerProfile = () => {
     };
 
     return (
-        <div>
-            <form className="profile-form" onSubmit={handleSubmit}>
-                <div className="profile profile-header">
-                    <h1>Complete your profile</h1>
-                    <p>This is basic information about who you are and the services you offer.</p>
-                </div>
+        <div className="flex justify-center" >
+        <div className="profile w-full max-w-2xl mx-auto ">
+            <form className="flex flex-col p-6 gap-4" onSubmit={handleSubmit}>
+    
+ <div className="flex flex-col gap-2">
+   <h1 className="section-header">Complete your profile</h1>
+   <p className="header">This is basic information about who you are and the services you offer.</p>
+ </div>
 
-                <div className="profile profile-title">
-                    <h2>What do you do?</h2>
-                    <label htmlFor="profile-title">Title</label>
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="e.g. Graphic Designer, Data Analyst"
-                    />
-                </div>
+ <div className="flex flex-col gap-2">
+   <label className="text-xl font-medium header" htmlFor="profile-title">Title</label>
+   <input
+     type="text"
+     className="p-2  rounded bg-neutral-900 text-white focus:outline-none focus:ring focus:border-blue-500"
+     value={title}
+     onChange={(e) => setTitle(e.target.value)}
+     placeholder="e.g. Graphic Designer, Data Analyst"
+   />
+ </div>
 
-                <div className="profile profile-experience">
-                    <h2>Tell us about your experience</h2>
-                    <label htmlFor="profile-experience">Experience</label>
-                    <input
-                        type="text"
-                        value={experience}
-                        onChange={(e) => setExperience(e.target.value)}
-                    />
-                </div>
+ <div className="flex flex-col gap-2">
+   <label className="text-xl font-medium header" htmlFor="profile-experience">Experience</label>
+   <textarea
+                 id="proposal"
+                 name="proposal"
+                 type="text"
+                 placeholder="Tell us about your experience"
+                 className="proposal-input bg-neutral-900 py-4 w-full "
+                 value={experience}
+                 onChange={(e) => setExperience(e.target.value)}
+                 required
+                 wrap="soft"
+             ></textarea>
+ </div>
 
-                <div>
-                    <h2>Your Skillset</h2>
-                    <label htmlFor="category">Category</label>
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                    >
-                        <option value="">Select Category</option>
-                        {category.map(cat => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                    </select>
+ <div className="flex flex-col gap-4">
+  
+   <label className="text-xl font-medium header" htmlFor="category">Category</label>
+   <select
+     className="p-2 border rounded bg-neutral-900 text-white focus:outline-none focus:ring focus:border-blue-500"
+     value={selectedCategory}
+     onChange={(e) => setSelectedCategory(e.target.value)}
+   >
+     <option value="">Select Category</option>
+     {category.map(cat => (
+       <option key={cat.id} value={cat.id}>{cat.name}</option>
+     ))}
+   </select>
 
-                    <label htmlFor="skills-select">Skills</label>
-                    <div className="skills-chip-container">
-                        {skillsList.map(skill => (
-                            <button
-                                type="button"
-                                key={skill.id}
-                                className={`skill-chip ${selectedSkills.includes(skill.id) ? 'selected' : ''}`}
-                                onClick={() => toggleSkillSelection(skill.id)}
-                            >
-                                {skill.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+   <label className="text-xl font-medium header" htmlFor="skills-select">Skills</label>
+   <div className="flex flex-wrap gap-2 ">
+     {skillsList.map(skill => (
+       <button
+         type="button"
+         key={skill.id}
+         className={`skill-chip ${selectedSkills.includes(skill.id) ? 'selected' : ''}`}
+         onClick={() => toggleSkillSelection(skill.id)}
+       >
+         {skill.name}
+       </button>
+     ))}
+   </div>
+ </div>
 
-                <div className="profile files">
-                    <h2>Employment History</h2>
-                    <label htmlFor="files">Upload document (optional)</label>
-                    <input type="file" onChange={handleFileChange} />
-                </div>
+ <div className="flex flex-col gap-2">
+   <label className="text-xl font-medium header" htmlFor="files">Upload employment history document (optional)</label>
+   <input
+     type="file"
+     className="file:bg-blue-800 file:text-white file:border-none file:rounded file:px-4 file:py-2 file:cursor-pointer bg-neutral-900 text-white"
+     onChange={handleFileChange}
+   />
+ </div>
 
-                <div className="profile profile-footer">
-                    <button type="submit">Complete Upload</button>
-                    <button type="button" onClick={clearForm}>Clear Form</button>
-                    {formError && <p className="error">{formError}</p>}
-                </div>
-            </form>
-        </div>
+ <div className="flex flex-col gap-2">
+   <div className="flex justify-center gap-4 py-4">
+     <button
+       type="submit"
+       className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+     >
+       Complete Upload
+     </button>
+     <button
+       type="button"
+       className="btn-sec"
+       onClick={clearForm}
+     >
+       Clear Form
+     </button>
+   </div>
+   {formError && <p className="font-bold text-red-500">{formError}</p>}
+ </div>
+
+  </form>
+</div>
+</div>
     );
-};
+}   
 
 export default FreelancerProfile;

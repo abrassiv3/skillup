@@ -33,9 +33,9 @@ const SignIn = () => {
           return;
         }
 
-        if (profile.usertype === 'client') {
+        if (profile.usertype === 'Client') {
           navigate('/dashboard');
-        } else if (profile.usertype === 'freelancer') {
+        } else if (profile.usertype === 'Freelancer') {
           navigate('/fl-dashboard');
         } else {
           setError('Unknown user type');
@@ -52,14 +52,17 @@ const SignIn = () => {
   };
 
   return (
-    <div>
+    <div className='flex flex-col items-center'>
       <h1 className="skillupheader text-center pt-4 pb-4 text-2xl">SKILLUP</h1>
-      <form onSubmit={handleSignIn} className="max-w-md m-auto pt-24">
+
+      <form onSubmit={handleSignIn} className="max-w-md m-auto w-fit">
         <div className="input-container">
+          
           <div className="input-header">
             <img className="icons back-arrow" src={backArrow} alt="back-arrow" onClick={() => navigate('/')} />
             <h2 className="small-header sign-in">Sign In To Continue</h2>
           </div>
+          
           <label className="label" htmlFor="email">Email</label>
           <input
             onChange={(e) => setEmail(e.target.value)}
@@ -74,10 +77,11 @@ const SignIn = () => {
             placeholder="Password should not be less than 8 characters"
             minLength={8}
             required
-            reveal={true}
-          />
+            />
+          
           <button type="submit" disabled={loading} className="mt-6 w-full">Sign In</button>
           {error && <p className="text-red-600 font-bold text-center pt-4">{error}</p>}
+          
           <p className="sign-up-text">Don't have an account? <Link to="/signup">Sign up!</Link></p>
         </div>
       </form>
