@@ -33,7 +33,7 @@ const JobCard = () => {
         return;
     }
 
-    if (userProfile.usertype !== 'freelancer') {
+    if (userProfile.usertype !== 'Freelancer') {
         alert("You must be a freelancer to submit proposals.");
         navigate("/dashboard");
         return;
