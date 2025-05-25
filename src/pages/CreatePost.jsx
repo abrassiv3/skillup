@@ -16,10 +16,7 @@ const CreatePost = () => {
   const [existingFileUrl, setExistingFileUrl] = useState(null);
   const [deleteExistingFile, setDeleteExistingFile] = useState(false);
   const [formError, setFormError] = useState(null);
-  const [generating, setGenerating] = useState(false);
 
-
-  // Fetch project for edit mode
   useEffect(() => {
     if (id) {
       fetchProjectForEdit(id);
@@ -40,7 +37,6 @@ const CreatePost = () => {
       setBudget(data.budget);
       if (data.file_url) setExistingFileUrl(data.file_url);
 
-      // Fetch associated skills
       const { data: projectSkills } = await supabase
         .from('project_skills')
         .select('skill_id')
@@ -51,31 +47,6 @@ const CreatePost = () => {
       }
     }
   };
-
-  const generateDescription = async () => {
-  setGenerating(true);
-  try {
-    const response = await fetch("/api/generate", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ title }),
-});
-
-if (!response.ok) {
-  const errorText = await response.text(); // get raw error message
-  console.error("Server error:", errorText);
-  return;
-}
-
-const data = await response.json();
-setDescription(data.description);
-  } catch (error) {
-    console.error("Failed to generate description:", error);
-  } finally {
-    setGenerating(false);
-  }
-};
-
 
   useEffect(() => {
     fetchCategories();
@@ -136,8 +107,7 @@ setDescription(data.description);
 
     let fileUrl = existingFileUrl;
 
-    // Delete existing file if replaced or deleted
-    if (deleteExistingFile && existingFileUrl) {
+ if (deleteExistingFile && existingFileUrl) {
       const pathParts = existingFileUrl.split("/files/")[1];
       if (pathParts) {
         await supabase.storage.from('files').remove([`uploads/${pathParts}`]);
@@ -145,8 +115,7 @@ setDescription(data.description);
       fileUrl = null;
     }
 
-    // Upload new file if selected
-    if (file) {
+ if (file) {
       const filePath = `uploads/${Date.now()}_${file.name}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('files')
@@ -168,8 +137,7 @@ setDescription(data.description);
       let projectId = id;
 
       if (id) {
-        //Update
-        await supabase
+      await supabase
           .from('projects')
           .update({
             title,
@@ -185,8 +153,7 @@ setDescription(data.description);
           .delete()
           .eq('project_id', id);
       } else {
-        // Create
-        const { data: newData } = await supabase
+       const { data: newData } = await supabase
           .from('projects')
           .insert([{
             title,
@@ -201,7 +168,6 @@ setDescription(data.description);
         projectId = newData.project_id;
       }
 
-      // Insert skills
       for (const skillId of selectedSkills) {
         await supabase
           .from('project_skills')
@@ -225,7 +191,6 @@ setDescription(data.description);
       <h1 className="section-header">{id ? 'Edit Project' : 'Start A New Project'}</h1>
       <div className='w-2/3 '>
         <form onSubmit={handleSubmit} className='flex flex-col gap-2 p-4'>
-          {/* <h2 className='createPostHeading'>{id ? 'Edit Project' : 'New Project'}</h2> */}
           {formError && <p className="error font-bold text-red-600 text-center text-xl">{formError}</p>}
 
           <label className="header text-2xl">Project Title</label>
@@ -245,14 +210,6 @@ setDescription(data.description);
             wrap="soft"
             required
           />
-          <button 
-  type="button" 
-  className="btn-ter mt-2 w-max" 
-  onClick={generateDescription}
-  disabled={generating}
->
-  {generating ? "Generating..." : "Generate Description with AI"}
-</button>
 
           <label className="header text-2xl">Category</label>
           <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
