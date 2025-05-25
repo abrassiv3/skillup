@@ -16,6 +16,8 @@ const CreatePost = () => {
   const [existingFileUrl, setExistingFileUrl] = useState(null);
   const [deleteExistingFile, setDeleteExistingFile] = useState(false);
   const [formError, setFormError] = useState(null);
+  const [generating, setGenerating] = useState(false);
+
 
   // Fetch project for edit mode
   useEffect(() => {
@@ -49,6 +51,26 @@ const CreatePost = () => {
       }
     }
   };
+
+  const generateDescription = async () => {
+  setGenerating(true);
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title }),
+    });
+    const data = await response.json();
+    if (data.description) {
+      setDescription(data.description);
+    }
+  } catch (error) {
+    console.error("Failed to generate description:", error);
+  } finally {
+    setGenerating(false);
+  }
+};
+
 
   useEffect(() => {
     fetchCategories();
@@ -218,6 +240,14 @@ const CreatePost = () => {
             wrap="soft"
             required
           />
+          <button 
+  type="button" 
+  className="btn-ter mt-2 w-max" 
+  onClick={generateDescription}
+  disabled={generating}
+>
+  {generating ? "Generating..." : "Generate Description with AI"}
+</button>
 
           <label className="header text-2xl">Category</label>
           <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
