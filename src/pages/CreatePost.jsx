@@ -206,7 +206,7 @@ const CreatePost = () => {
             value={description} 
             onChange={(e) => setDescription(e.target.value)} 
             placeholder="Add your project description"
-            className="w-full h-full"
+            className="w-full h-100"
             wrap="soft"
             required
           />
