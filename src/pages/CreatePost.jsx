@@ -56,14 +56,19 @@ const CreatePost = () => {
   setGenerating(true);
   try {
     const response = await fetch("../api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title }),
-    });
-    const data = await response.json();
-    if (data.description) {
-      setDescription(data.description);
-    }
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ title }),
+});
+
+if (!response.ok) {
+  const errorText = await response.text(); // get raw error message
+  console.error("Server error:", errorText);
+  return;
+}
+
+const data = await response.json();
+setDescription(data.description);
   } catch (error) {
     console.error("Failed to generate description:", error);
   } finally {
