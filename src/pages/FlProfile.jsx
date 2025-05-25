@@ -84,7 +84,6 @@ const FlProfile = () => {
       .getPublicUrl(filePath);
 
     if (data?.publicUrl) {
-      // Add cache-busting timestamp
       setAvatarUrl(`${data.publicUrl}?t=${Date.now()}`);
     } else if (error) {
       console.error("Error fetching avatar URL:", error);
@@ -92,7 +91,12 @@ const FlProfile = () => {
   };
 
   const handleFileChange = (e) => {
-    setAvatarFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setAvatarFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setAvatarUrl(previewUrl);
+    }
   };
 
 const handleSubmit = async (e) => {
@@ -108,12 +112,10 @@ const handleSubmit = async (e) => {
       lastname: profile.lastname
     };
 
-    // === Upload and replace avatar ===
     if (avatarFile) {
       const fileExt = avatarFile.name.split('.').pop();
       const filePath = `avatars/${user.id}.${fileExt}`;
 
-      // Upload with upsert to replace
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, avatarFile, { upsert: true });
@@ -121,10 +123,9 @@ const handleSubmit = async (e) => {
       if (uploadError) throw uploadError;
 
       updatedUserFields.profile_picture = filePath;
-      loadAvatar(filePath); // refresh the view
+      loadAvatar(filePath);
     }
 
-    // === Update users table ===
     const { error: updateUserError } = await supabase
       .from('users')
       .update(updatedUserFields)
@@ -132,7 +133,6 @@ const handleSubmit = async (e) => {
 
     if (updateUserError) throw updateUserError;
 
-    // === Update freelancer-data table ===
     const { error: freelancerError } = await supabase
       .from('freelancer-data')
       .upsert({
@@ -174,7 +174,6 @@ const handleSubmit = async (e) => {
 
       <div>{formError && <p className="text-red-600 text-2xl text-center font-bold">{formError}</p>}</div>
 
-      {/* Editable Form */}
       <form onSubmit={handleSubmit} className="space-y-4 w-full h-fit p-3 flex gap-4">
         <div className='flex flex-col w-full'>
           <div>
@@ -184,17 +183,16 @@ const handleSubmit = async (e) => {
           <div className='py-2'>
             <h2 className='header'> Profile Picture</h2>
             <div className='flex flex-col items-center gap-2'>
-
-              {/* Avatar Display and Upload */}
-              <div className="avatar w-32 h-32 rounded-full overflow-hidden border border-gray-300 mx-auto">
+              <div className="avatar w-32 h-32 rounded-full overflow-hidden border border-gray-300">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Profile Avatar" className="w-full h-full object-cover" />
                 ) : (
                   <div className='flex items-center justify-center w-full h-full text-xl font-bold'>
                     AV
-                  </div>
-                )}
               </div>
+              )}
+            </div>
+
               <label className='flex items-center gap-2' htmlFor="avatar"><img src={plus} alt="add image" className='border-2 border-green-600 rounded-full'/> <p className='font-bold'>Change Picture</p></label>
               <input type="file" id='avatar' class="hidden" onChange={handleFileChange} accept="image/*" />
             </div>

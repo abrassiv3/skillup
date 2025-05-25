@@ -50,7 +50,6 @@ const ClientProfile = () => {
       .getPublicUrl(filePath);
 
     if (data?.publicUrl) {
-      // Add cache-busting timestamp
       setAvatarUrl(`${data.publicUrl}?t=${Date.now()}`);
     } else if (error) {
       console.error("Error fetching avatar URL:", error);
@@ -135,32 +134,29 @@ const handleFileChange = (e) => {
     
           <div>{formError && <p className="text-red-600 text-2xl text-center font-bold">{formError}</p>}</div>
     
-          {/* Editable Form */}
           <form onSubmit={handleSubmit} className="space-y-4 w-2/3 h-fit p-3 flex gap-4">
             <div className='flex flex-col w-full'>
               <div>
                 <h2 className='header text-3xl'>Update Your Personal Details</h2>
               </div>
               
-              <div className='py-2'>
-                <h2 className='header text-center'> Profile Picture</h2>
-                
+              <div className='py-2'>              
                 <div className='flex flex-col items-center gap-2'>
+                  
                   <div className='py-2'>
-  <h2 className='header text-center'> Profile Picture</h2>
-  <div className='flex flex-col items-center gap-2'>
-    <div className="avatar w-32 h-32 rounded-full overflow-hidden border border-gray-300 mx-auto">
-      {avatarUrl ? (
-        <img src={avatarUrl} alt="Profile Avatar" className="w-full h-full object-cover" />
-      ) : (
-        <div className='flex items-center justify-center w-full h-full text-xl font-bold bg-gray-200'>
-          AV
-        </div>
-      )}
-    </div>
-  </div>
-</div>
-
+                    <h2 className='header text-center'> Profile Picture</h2>
+                    <div className='flex flex-col items-center gap-2'>
+                      <div className="avatar w-32 h-32 rounded-full overflow-hidden border border-gray-300">
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt="Profile Avatar" className="w-full h-full object-cover" />
+                          ) : (
+                          <div className='flex items-center justify-center w-full h-full text-xl font-bold bg-gray-200'>
+                            AV
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
 
                   <label className='flex items-center gap-2' htmlFor="avatar"><img src={plus} alt="add image" className='border-2 border-green-600 rounded-full'/> <p className='font-bold'>Change Picture</p></label>
                   <input type="file" id='avatar' class="hidden" onChange={handleFileChange} accept="image/*" />
