@@ -118,7 +118,7 @@ const Applications = () => {
       }
 
       if (existingChatrooms && existingChatrooms.length > 0) {
-        navigate(`/client-chats/${existingChatrooms[0].id}`);
+        navigate(`/chats/${existingChatrooms[0].id}`);
         return;
       }
 
@@ -138,7 +138,7 @@ const Applications = () => {
       }
 
       if (data && data.length > 0) {
-        navigate(`/client-chats/${data[0].id}`); 
+        navigate(`/chats/${data[0].id}`); 
       }
     } catch (error) {
       console.error('An unexpected error occurred:', error.message);
