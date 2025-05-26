@@ -118,7 +118,7 @@ const Applications = () => {
       }
 
       if (existingChatrooms && existingChatrooms.length > 0) {
-        navigate(`/client-chats/${existingChatrooms[0].id}`);
+        navigate(`/chats/${existingChatrooms[0].id}`);
         return;
       }
 
