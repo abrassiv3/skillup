@@ -143,7 +143,7 @@ const PostedProjects = () => {
                       ))}
                   </ul>
                     
-                  <p className="font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl">$  {job.budget}</p>
+                  <p className="font-bold py-2 w-1/7 px-3 m-0.5 text-sky-500  bg-neutral-800 border border-blue-500 rounded-2xl">KES {job.budget}</p>
                 </div>
               </div>
 

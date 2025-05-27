@@ -67,7 +67,7 @@ const Drafts = () => {
       console.error('Failed to delete:', error);
     } else {
       alert('Draft deleted.');
-      fetchJobPost(); // Refresh the list
+      fetchJobPost();
     }
   };
   
@@ -81,7 +81,7 @@ const Drafts = () => {
       console.error('Failed to publish:', error);
     } else {
       alert('Draft posted.');
-      fetchJobPost(); // Refresh the list
+      fetchJobPost();
     }
   }
   
@@ -126,7 +126,7 @@ if (loading) {
                     ))}
                 </ul>
                 
-                <p className="font-bold text-center py-0.5 h-fit w-1/7 px-3 m-0.5 text-emerald-400 bg-neutral-800 border border-emerald-400 rounded-2xl">${jobPosts.budget}</p>
+                <p className="font-bold text-center py-0.5 h-fit w-1/7 px-3 m-0.5 text-emerald-400 bg-neutral-800 border border-emerald-400 rounded-2xl">KES {jobPosts.budget}</p>
               </div>
 
             
@@ -140,7 +140,6 @@ if (loading) {
               
               <button className='w-1/3 btn-sec' onClick={() => handleDelete(jobPosts.project_id)}>Delete</button>
             </div>
-            
             </div>
           </li>
           ))}
