@@ -183,6 +183,10 @@ const Applications = () => {
               <li className='break-inside-avoid py-3' key={application.id}>
                 <div className="flex flex-col gap-2 p-4 rounded-xl bg-neutral-700 text-white h-fit">
                   <div>
+                    <p className={`font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl ${getStatusClass(application.status)}`}>Status: {application.status}
+                    </p>
+                  </div>
+                    <div className='w-full'>
                     <p><strong>Project:</strong> {application.projectid.title}</p>
                     <p>
                       <strong>Applied on:</strong> {new Date(application.created_at).toLocaleString('en-US', {
@@ -201,12 +205,6 @@ const Applications = () => {
                   <div>
                     <p><strong>Proposal:</strong></p>
                     <div dangerouslySetInnerHTML={{ __html: application.proposal.replace(/\n/g, '<br/>') }}></div>
-                  </div>
-
-                  <div>
-                    <p className={`font-bold py-0.5 w-fit px-2 bg-neutral-800 border rounded-2xl ${getStatusClass(application.status)}`}>
-                      <strong>Status:</strong> {application.status}
-                    </p>
                   </div>
 
                   {application.projectid.accepting === true && (

@@ -67,7 +67,6 @@ const Sidebar = () => {
         <ul className='flex flex-col gap-4 items-center'>
           <li><Link to="/createpost" className='sb-main inline-flex items-center outline px-4 py-2 rounded'>New Post</Link></li>
           <li><Link to="/dashboard">Dashboard</Link></li>
-          <li><Link to="/client-chats">Chats</Link></li>
           <li><Link to="/applications">Applications</Link></li>
           <li><Link to="/posted-projects">Posted Projects</Link></li>
           <li><Link to="/drafts">My Drafts</Link></li>

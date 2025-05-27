@@ -104,8 +104,7 @@ const handleAddMilestone = async (e) => {
     }
 
   return (
-    <div className="w-full pb-8 p-2">
-      <h2 className="section-header">Active Posts</h2>
+    <div className="flex flex-col w-full pb-8 p-2 gap-2">
 
       {projects.length === 0 ? (
         <p className="text-gray-400">No active projects found.</p>
@@ -114,24 +113,21 @@ const handleAddMilestone = async (e) => {
           <div key={project.projectid} className="p-4 rounded-lg bg-neutral-900">
             <div className="flex justify-between items-center">
               
-              <div className='flex flex-col'>
+              <div className='w-full'>
+              <div className='flex flex-col w-full'>
                 <h3 className="text-xl font-bold text-white">{project.projectid.title}</h3>
                 <p className='text-neutral-300 font-bold'>Freelancer: {project.freelancer_id.firstname} {project.freelancer_id.lastname}</p>
               </div>
+              </div>
 
-              <div className='flex gap-4'>
-              <button
-                onClick={() => handleOpenModal(project)}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                <div className='flex items-center gap-1'><img src={plus}/> Add Milestone</div>
-              </button>
+              <div className='flex gap-4 w-full'>
+              <button onClick={() => handleOpenModal(project)} className="px-4 py-2 w-fit" > Add Milestone </button>
               <button className='btn-ter' onClick={() => {navigate(`/project/${project.projectid.project_id}`)}}>View Progress</button>
               </div>
 
             </div>
             
-            <ul className="space-y-2">
+            <ul className="space-y-2 flex flex-col gap-2 pt-2">
             {milestones[project.projectid.project_id] && milestones[project.projectid.project_id].length > 0 ? (
               milestones[project.projectid.project_id].map(milestone => (
                 <li key={milestone.id} className="flex justify-between items-center bg-neutral-800 p-2 rounded">

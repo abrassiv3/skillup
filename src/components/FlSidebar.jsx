@@ -67,7 +67,7 @@ const FlSidebar = () => {
         <ul className='flex flex-col gap-4 items-center'>
           <li><Link to="/jobposts" className='sb-main inline-flex items-center outline px-4 py-2 rounded'>Find a Job</Link></li>
           <li><Link to="/fl-dashboard">Dashboard</Link></li>
-          <li><Link to="/chats">Chats</Link></li>
+          {/* <li><Link to="/chats">Chats</Link></li> */}
           <li><Link to="/my-applications">View Applications</Link></li>
           <li><Link to="/fl-profile">My Profile</Link></li>
         </ul>

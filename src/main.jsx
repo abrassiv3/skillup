@@ -57,7 +57,6 @@ createRoot(document.getElementById('root')).render(
           <Route path="/archive" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><ArchivedPosts /></ProtectedRoute></PrivateRoute> } />
           <Route path="/client-profile" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><ClientProfile /></ProtectedRoute></PrivateRoute> } />
           <Route path="/drafts" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Client']}><Drafts /></ProtectedRoute></PrivateRoute> } />
-          <Route path="/client-chats" element={ <PrivateRoute><Chats /></PrivateRoute> } />
           <Route path="/chats/:chatid" element={ <PrivateRoute><ChatRoom /></PrivateRoute> } />
         </Route>
 

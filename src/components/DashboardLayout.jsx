@@ -4,8 +4,8 @@ import { Outlet } from 'react-router-dom'
 
 const DashboardLayout = () => {
   return (
-    <div className='dashboard-layout '>
-      <div className=' grid gap-3 grid-cols-12'>
+    <div className='dashboard-layout'>
+      <div className=' grid gap-3 grid-cols-12 '>
       <Sidebar />
         <main className='dashboard-content col-span-10'>
           <DashboardHeader />

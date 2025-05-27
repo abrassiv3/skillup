@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { userAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import ChatroomList from '../components/ChatroomList';
 
 const FlDashboard = () => {
   const { session } = userAuth();
@@ -69,20 +70,26 @@ if (loading) {
 }
 
   return (
-    <div className="w-full pb-8 p-2">
-      <h2 className="section-header">Ongoing Projects</h2>
-
+    <div className="w-full pb-8 p-2 min-w-2xl">
+      <div className='grid grid-cols-10 gap-4'>
+      <div className='col-span-4'>
+        <h2 className="section-header">Your Chats</h2>
+          <ChatroomList />
+        </div>
+      
+      <div className='flex flex-col gap-2 col-span-6'>
+        <h2 className="section-header">Ongoing Projects</h2>
       {projects.length === 0 ? (
         <p className="text-gray-400">No active projects found.</p>
       ) : (
         projects.map(project => (
-        <div key={project.projectid} className="p-4 rounded-lg bg-neutral-900">
-          <div className="flex justify-between items-center">
-            <div className='flex flex-col'>
+        <div key={project.projectid} className="py-2 px-4 rounded-lg bg-neutral-900">
+          <div className="flex items-center gap-6">
+            <div className='flex flex-col w-full'>
               <h3 className="text-xl font-bold text-white">{project.projectid.title}</h3>
-              <p className='font-bold'>Client: {project.client_id.firstname} {project.client_id.lastname}</p>
+              <p className='font-bold w-full'>Client: {project.client_id.firstname} {project.client_id.lastname}</p>
             </div>
-            <div className='flex gap-4'>
+            <div className='flex flex-col w-2/3 justify-end gap-2'>
               <button
                 onClick={() => handleOpenModal(project.id)}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -95,7 +102,7 @@ if (loading) {
         </div>
         ))
       )}
-
+    </div>
   {showModal && (
   <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md">
     <div className="bg-neutral-800 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto p-6">
@@ -108,7 +115,7 @@ if (loading) {
         if (!currentProject) return <p className="text-neutral-400">Project not found.</p>;     
 
         return (
-          <div className="mb-4 p-4 rounded-lg bg-neutral-900">
+          <div className="mb-4 p-4 rounded-lg bg-neutral-900 w-full">
             <div className="flex flex-col">
               <h3 className="text-xl font-bold text-white">
                 {currentProject.projectid.title}
@@ -133,7 +140,7 @@ if (loading) {
     </div>
   </div>
 )}
-
+</div>
     </div>
   );
 };

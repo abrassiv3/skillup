@@ -189,6 +189,7 @@ transition: .45s;
 .dashboard-layout {
   display: flex;
   flex-direction: column;
+  position: sticky;
   height: 100vh;
 }
 
