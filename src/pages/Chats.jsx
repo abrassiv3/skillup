@@ -1,11 +1,11 @@
-import ChatroomList from '../components/ChatRoomList';
+// import ChatroomList from '../components/ChatRoomList';
 
-const Chats = () => {
-return (
-    <div>
-      <ChatroomList />
-    </div>
-  );
-};
+// const Chats = () => {
+// return (
+//     <div>
+//       <ChatroomList />
+//     </div>
+//   );
+// };
 
-export default Chats;
+// export default Chats;
