@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { userAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import ChatroomList from '../components/ChatroomList';
+import ChatroomList from '../components/ChatRoomList';
 
 const FlDashboard = () => {
   const { session } = userAuth();
