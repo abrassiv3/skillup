@@ -31,7 +31,7 @@ import ProjectMilestones from "./pages/ProjectMilestones.jsx";
 import PostedProjects from "./pages/PostedProjects.jsx";
 import ChatRoom from "./pages/ChatRoom.jsx";
 import FlChatRoom from "./pages/FlChatRoom.jsx";
-import Chats from "./pages/Chats.jsx";
+// import Chats from "./pages/Chats.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -67,7 +67,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/fl-profile" element={ <PrivateRoute><FlProfile /></PrivateRoute> } />
           <Route path="/my-applications" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Freelancer']}><FlApplications /></ProtectedRoute></PrivateRoute> } />
           <Route path="apply-to-job/:jobId" element={ <PrivateRoute><ProtectedRoute allowedRoles={['Freelancer']}><ApplyToJob /></ProtectedRoute></PrivateRoute> } />
-          <Route path="/chats" element={ <PrivateRoute><Chats /></PrivateRoute> } />
+          {/* <Route path="/chats" element={ <PrivateRoute><Chats /></PrivateRoute> } /> */}
           <Route path="/flchats/:chatid" element={ <PrivateRoute><FlChatRoom /></PrivateRoute> } />
         </Route>
 
