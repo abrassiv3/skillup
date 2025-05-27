@@ -46,8 +46,6 @@ const urlRegex = /(https?:\/\/[^\s]+)/g;
           .eq('chatroom_id', chatid)
           .order('created_at', { ascending: true });
 
-          console.log(data)
-
         if (fetchError) {
           console.error('Error fetching messages:', fetchError);
           setError(fetchError.message);
