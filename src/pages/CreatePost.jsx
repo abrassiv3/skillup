@@ -185,7 +185,6 @@ const CreatePost = () => {
     }
   };
 
-
   return (
     <div className='p-2 pb-4'>
       <h1 className="section-header">{id ? 'Edit Project' : 'Start A New Project'}</h1>
@@ -244,7 +243,7 @@ const CreatePost = () => {
           <input type="file" onChange={handleFileChange} />
 
           <label className="header text-2xl">Budget</label>
-          <input type="number" placeholder="$" value={budget} onChange={(e) => setBudget(e.target.value)} />
+          <input type="number" placeholder="KES " min='0' value={budget} onChange={(e) => setBudget(e.target.value)} />
 
           <button type="submit">{id ? 'Update' : 'Next'}</button>
         </form>
